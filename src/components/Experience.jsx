@@ -70,7 +70,7 @@ export default function Experience() {
                   <span className="timeline-dates">{item.dates}</span>
                   <span className="timeline-role">{item.role}</span>
                   <span className="timeline-meta">
-                    <span className="placeholder-text">{e.companyPlaceholder}</span>
+                    {item.company ? <span className="timeline-company">{item.company}</span> : <span className="placeholder-text">{e.companyPlaceholder}</span>}
                     <span aria-hidden="true"> · </span>
                     {item.context}
                   </span>

@@ -12,14 +12,14 @@ export const contact = {
   whatsappDisplay: '+966 53 290 4070',
   whatsappNumber: '966532904070',
   // Replace with your LinkedIn profile URL, e.g. https://www.linkedin.com/in/your-name
-  linkedin: '',
+  linkedin: 'https://www.linkedin.com/in/ahmad-ali-8b9111278',
 };
 
 // CV download. Put your PDF at: public/cv/Ahmed-Ali-CV.pdf
 // then change cvAvailable to true.
 export const cv = {
   file: 'cv/Ahmed-Ali-CV.pdf',
-  available: false,
+  available: true,
 };
 
 // Profile photo (hero) and work photo (About section), stored in public/images/.
@@ -85,9 +85,10 @@ export const content = {
       items: [
         {
           id: 'current',
-          role: '[Current job title]',
-          dates: '[Start date] – Present',
-          context: 'Residential towers development project',
+          role: 'Planning & Cost Engineer',
+          company: 'LEVELs',
+          dates: 'November 2024 – Present',
+          context: 'Residential towers development project, Jeddah',
           current: true,
           points: [
             'Handling multidisciplinary technical office and project controls responsibilities.',
@@ -97,6 +98,7 @@ export const content = {
         {
           id: 'pm',
           role: 'Project Manager',
+          company: 'Asaico Emtyas Contracting (subcontractor to SAJCO)',
           dates: 'November 2022 – May 2024',
           context: 'NEOM International Airport',
           points: [
@@ -109,6 +111,7 @@ export const content = {
         {
           id: 'site',
           role: 'Site Manager',
+          company: 'Yemeni Economic Corporation',
           dates: 'April 2020 – July 2021',
           context: 'Building construction',
           points: [
@@ -120,6 +123,7 @@ export const content = {
         {
           id: 'civil',
           role: 'Civil Engineer',
+          company: 'Yemeni Economic Corporation',
           dates: 'February 2019 – January 2020',
           context: 'Commercial, residential and social buildings',
           points: [
@@ -378,9 +382,10 @@ export const content = {
       items: [
         {
           id: 'current',
-          role: '[المسمى الوظيفي الحالي]',
-          dates: '[تاريخ البدء] – حتى الآن',
-          context: 'مشروع تطوير أبراج سكنية',
+          role: 'مهندس تخطيط وتكاليف',
+          company: 'LEVELs',
+          dates: 'نوفمبر 2024 – حتى الآن',
+          context: 'مشروع تطوير أبراج سكنية، جدة',
           current: true,
           points: [
             'تولي مسؤوليات المكتب الفني وضبط المشاريع في عدة تخصصات.',
@@ -390,6 +395,7 @@ export const content = {
         {
           id: 'pm',
           role: 'مدير مشروع',
+          company: 'أسايكو امتياز للمقاولات (مقاول باطن لدى ساجكو)',
           dates: 'نوفمبر 2022 – مايو 2024',
           context: 'مطار نيوم الدولي',
           points: [
@@ -402,6 +408,7 @@ export const content = {
         {
           id: 'site',
           role: 'مدير موقع',
+          company: 'المؤسسة الاقتصادية اليمنية',
           dates: 'أبريل 2020 – يوليو 2021',
           context: 'إنشاء المباني',
           points: [
@@ -413,6 +420,7 @@ export const content = {
         {
           id: 'civil',
           role: 'مهندس مدني',
+          company: 'المؤسسة الاقتصادية اليمنية',
           dates: 'فبراير 2019 – يناير 2020',
           context: 'مبانٍ تجارية وسكنية واجتماعية',
           points: [

@@ -1431,3 +1431,8 @@ a {
     transition: none !important;
   }
 }
+
+.timeline-company {
+  font-weight: 600;
+  color: var(--ink);
+}
