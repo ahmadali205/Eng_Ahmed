@@ -92,7 +92,26 @@ Each push to `main` rebuilds and republishes the site automatically.
 
 `vite.config.js` uses `base: './'`, so every file path in the build is relative. The same build works at the root of a domain or inside `/<repository-name>/` with no extra configuration.
 
-## 5. Project structure
+## 5. QR code
+
+The QR code opens **https://ahmadali205.github.io/Eng_Ahmed/** (the published site, not the repository).
+
+| File | Use |
+|---|---|
+| `public/qr/portfolio-qr.png` | High-resolution PNG (~2400 px) for print, CV, LinkedIn |
+| `public/qr/portfolio-qr.svg` | Vector, scales to any size |
+| `public/qr/portfolio-qr-card.pdf` / `.png` | Printable A6 card with name and titles |
+
+Black on white, 4-module quiet zone, error correction Q. If the site address ever changes:
+
+```bash
+pip install segno
+python3 scripts/make_qr.py https://new-address/
+```
+
+and update `siteUrl` in `src/content/profile.js`. The printable card is built from `scripts/qr-card.html`.
+
+## 6. Project structure
 
 ```
 ├── .github/workflows/deploy.yml   GitHub Pages deployment
@@ -105,13 +124,13 @@ Each push to `main` rebuilds and republishes the site automatically.
 └── src/
     ├── content/profile.js         ALL website content (EN + AR)
     ├── i18n.jsx                   Language switching, RTL/LTR, Bootstrap RTL
-    ├── components/                One component per section
+    ├── components/                One component per section (QrSection.jsx = QR block)
     ├── styles/main.css            Design tokens and styles
     ├── App.jsx                    Section order
     └── main.jsx                   Entry point
 ```
 
-## 6. Notes
+## 7. Notes
 
 - **Language:** English is the default. The visitor's choice is remembered in their browser.
 - **Contact form:** the site has no server, so the form opens the visitor's own email app with the message filled in. Nothing is sent from the website itself. To receive messages directly, connect a form service such as Formspree and change `submit` in `src/components/Contact.jsx`.

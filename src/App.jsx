@@ -8,6 +8,7 @@ import Skills from './components/Skills.jsx';
 import Projects from './components/Projects.jsx';
 import ProjectControls from './components/ProjectControls.jsx';
 import CvSection from './components/CvSection.jsx';
+import QrSection from './components/QrSection.jsx';
 import Contact from './components/Contact.jsx';
 import Footer from './components/Footer.jsx';
 
@@ -28,6 +29,7 @@ export default function App() {
         <Projects />
         <ProjectControls />
         <CvSection />
+        <QrSection />
         <Contact />
       </main>
       <Footer />

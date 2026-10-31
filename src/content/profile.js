@@ -29,6 +29,15 @@ export const workPhoto = 'images/at-work.jpg';
 
 export const yearsOfExperience = '8+';
 
+// Published website address (encoded in the QR code). If it changes,
+// regenerate the QR: python3 scripts/make_qr.py <new-url>
+export const siteUrl = 'https://ahmadali205.github.io/Eng_Ahmed/';
+export const qr = {
+  png: 'qr/portfolio-qr.png',
+  svg: 'qr/portfolio-qr.svg',
+  card: 'qr/portfolio-qr-card.pdf',
+};
+
 export const content = {
   en: {
     meta: {
@@ -320,6 +329,19 @@ export const content = {
         required: 'Please fill in your name, email and message.',
         opened: 'Your email app should open with the message ready to send.',
       },
+    },
+    qr: {
+      eyebrow: 'Portfolio QR Code',
+      title: 'Scan to Visit My Portfolio',
+      text: 'Explore my professional experience, projects, and engineering capabilities.',
+      alt: 'QR code that opens Ahmed Ali’s portfolio website',
+      png: 'Download QR Code (PNG)',
+      svg: 'Download SVG',
+      card: 'Printable card (PDF)',
+      share: 'Share Portfolio',
+      copy: 'Copy Website URL',
+      copied: 'Link copied',
+      shareFallback: 'Sharing is not available here, so the link was copied instead.',
     },
     footer: {
       rights: 'All rights reserved.',
@@ -617,6 +639,19 @@ export const content = {
         required: 'يرجى كتابة الاسم والبريد الإلكتروني والرسالة.',
         opened: 'يُفترض أن يفتح تطبيق البريد لديك والرسالة جاهزة للإرسال.',
       },
+    },
+    qr: {
+      eyebrow: 'رمز QR للموقع',
+      title: 'امسح الرمز لزيارة موقعي',
+      text: 'تعرّف على خبراتي المهنية ومشاريعي وقدراتي الهندسية.',
+      alt: 'رمز QR يفتح الموقع الشخصي لأحمد علي',
+      png: 'تحميل رمز QR (PNG)',
+      svg: 'تحميل SVG',
+      card: 'بطاقة للطباعة (PDF)',
+      share: 'مشاركة الموقع',
+      copy: 'نسخ رابط الموقع',
+      copied: 'تم نسخ الرابط',
+      shareFallback: 'المشاركة غير متاحة هنا، فتم نسخ الرابط بدلًا منها.',
     },
     footer: {
       rights: 'جميع الحقوق محفوظة.',

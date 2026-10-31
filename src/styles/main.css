@@ -1436,3 +1436,83 @@ a {
   font-weight: 600;
   color: var(--ink);
 }
+
+/* ---------- QR ---------- */
+.qr-panel {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 56px;
+  align-items: center;
+}
+.qr-code {
+  padding: 14px;
+  background: #fff;
+  border-radius: var(--radius);
+  box-shadow: 0 0 0 1px rgba(200, 165, 90, 0.5), 0 24px 50px rgba(0, 0, 0, 0.35);
+}
+.qr-code img {
+  display: block;
+  width: 280px;
+  max-width: 100%;
+  height: auto;
+}
+.qr-copy h2 {
+  font-size: clamp(1.9rem, 3.6vw, 2.6rem);
+  font-weight: 700;
+  color: var(--white);
+  margin: 0 0 10px;
+}
+.qr-copy p {
+  color: var(--on-navy-soft);
+  margin: 0 0 8px;
+  max-width: 52ch;
+}
+.qr-copy .eyebrow {
+  color: var(--gold);
+}
+.qr-url {
+  font-family: var(--font-mono);
+  font-size: 0.92rem;
+  color: var(--gold) !important;
+  overflow-wrap: anywhere;
+  text-align: start;
+  unicode-bidi: plaintext;
+}
+.qr-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 24px;
+}
+.qr-actions .btn-gold,
+.qr-actions .btn-outline-light-custom {
+  padding: 11px 18px;
+  font-size: 0.95rem;
+  background-color: transparent;
+}
+.qr-actions .btn-gold {
+  background: var(--gold);
+}
+.qr-status {
+  min-height: 1.5em;
+  margin-top: 12px !important;
+  color: var(--gold) !important;
+  font-size: 0.92rem;
+}
+@media (max-width: 767.98px) {
+  .qr-panel {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px;
+    justify-items: center;
+  }
+  .qr-copy {
+    width: 100%;
+  }
+}
+button.btn-outline-light-custom,
+button.btn-gold {
+  font-family: inherit;
+}
+button.btn-outline-light-custom {
+  background: transparent;
+}
