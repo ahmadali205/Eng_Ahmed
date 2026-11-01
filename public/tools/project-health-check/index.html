@@ -212,8 +212,6 @@ html[lang="ar"] .report { font-family: var(--font-ar); }
 .report td:first-child { padding-inline-end: 8px; }
 .r-foot span { white-space: nowrap; }
 .r-foot { display: flex; justify-content: space-between; gap: 12px; font-size: 10.5px; color: var(--ink-2); border-top: 1px solid var(--line); padding-top: 8px; }
-#report.rendering { display: block; position: absolute; top: 0; left: 0; z-index: 1; }
-.cover { position: fixed; inset: 0; z-index: 50; background: var(--bg); display: grid; place-items: center; font-size: 16px; font-weight: 600; color: var(--ink); }
 @media print {
   @page { size: A4; margin: 0; }
   body { background: #fff !important; }
@@ -414,7 +412,7 @@ html[lang="ar"] .report { font-family: var(--font-ar); }
       eacRangeNote: 'الرقم الأعلى لو التأخير زوّد التكلفة كمان.',
       sForeRange: (date, a, b) => ` لو استمر بنفس الأداء سينتهي في <b>${date}</b> بتكلفة نهائية بين <b>${a}</b> و <b>${b}</b>.`,
       disclaimer: 'النتائج تقديرية للمتابعة السريعة، ومبنية على الأرقام المُدخلة واستمرار نفس الأداء. لا تُغني عن تحليل البرنامج الزمني ومراجعة التكاليف التفصيلية.',
-      print: 'طباعة التقرير', pdf: 'تحميل PDF', excel: 'تصدير Excel', working: 'جاري التجهيز…', pdfFail: 'تعذّر إنشاء الملف. استخدم "طباعة التقرير" واختر حفظ كـ PDF.',
+      print: 'طباعة التقرير', pdf: 'تحميل PDF', excel: 'تصدير Excel', working: 'جاري التجهيز…', pdfHint: 'في نافذة الطباعة اختر «حفظ كـ PDF» كوجهة للطباعة.',
       rTitle: 'تقرير صحة المشروع', rDate: 'تاريخ التقرير', rIssued: 'تاريخ الإصدار', rInputs: 'البيانات المُدخلة', rResults: 'النتائج',
       rPlanBasis: 'أساس الخطة', rReq: 'الإنجاز الشهري المطلوب', rCurRate: 'الإنجاز الشهري الحالي', rPrepared: 'أُعدّ بأداة فحص صحة المشروع · م. أحمد علي',
       xField: 'البند', xValue: 'القيمة',
@@ -490,7 +488,7 @@ html[lang="ar"] .report { font-family: var(--font-ar); }
       eacRangeNote: 'The higher figure applies if the delay also drives cost up.',
       sForeRange: (date, a, b) => ` At the current performance it will finish on <b>${date}</b> at a final cost between <b>${a}</b> and <b>${b}</b>.`,
       disclaimer: 'Results are estimates for quick monitoring, based on the figures entered and on current performance continuing. They do not replace a full schedule analysis or detailed cost review.',
-      print: 'Print report', pdf: 'Download PDF', excel: 'Export Excel', working: 'Preparing…', pdfFail: 'Could not create the file. Use "Print report" and choose Save as PDF.',
+      print: 'Print report', pdf: 'Download PDF', excel: 'Export Excel', working: 'Preparing…', pdfHint: 'In the print window, choose “Save as PDF” as the destination.',
       rTitle: 'Project Health Report', rDate: 'Report date', rIssued: 'Issued', rInputs: 'Inputs', rResults: 'Results',
       rPlanBasis: 'Plan basis', rReq: 'Required monthly progress', rCurRate: 'Current monthly progress', rPrepared: 'Prepared with the Project Health Check tool · Eng. Ahmed Ali',
       xField: 'Item', xValue: 'Value',
@@ -737,8 +735,8 @@ html[lang="ar"] .report { font-family: var(--font-ar); }
     // the chart and bars read --tone from the verdict; mirror it on the results box
     box.style.setProperty('--tone', `var(--${r.tone === 'good' ? 'good' : r.tone === 'warn' ? 'warn' : 'bad'})`);
 
-    $('btn-print').addEventListener('click', async () => { buildReport(r); try { if (document.fonts) { await Promise.all(['400', '500', '700'].map((w) => document.fonts.load(`${w} 16px Tajawal`, 'أب'))); await document.fonts.ready; } } catch (e) {} window.print(); });
-    $('btn-pdf').addEventListener('click', () => downloadPdf(r));
+    $('btn-print').addEventListener('click', () => printReport(r, false));
+    $('btn-pdf').addEventListener('click', () => printReport(r, true));
     $('btn-xls').addEventListener('click', () => exportCsv(r));
     $('copy').addEventListener('click', () => {
       const done = () => { $('copied').hidden = false; setTimeout(() => { const c = $('copied'); if (c) c.hidden = true; }, 1800); };
@@ -811,72 +809,27 @@ html[lang="ar"] .report { font-family: var(--font-ar); }
     return el;
   }
 
-  // PDF libraries ship next to this page; cdnjs is the fallback
-  const LIBS = [
-    ['html2canvas', 'html2canvas.min.js', 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js'],
-    ['jspdf', 'jspdf.umd.min.js', 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'],
-  ];
-  const addScript = (src) => new Promise((ok, fail) => { const sc = document.createElement('script'); sc.src = src; sc.onload = ok; sc.onerror = fail; document.head.appendChild(sc); });
-  function loadPdfLib() {
-    return Promise.all(LIBS.map(([g, local, cdn]) => window[g] ? null : addScript(local).catch(() => addScript(cdn))));
-  }
-
-  // The PDF renderer draws the report as an image, which cannot fetch font files,
-  // so the fonts are embedded into the report as data URIs.
-  let fontCss = null;
-  async function embeddedFonts() {
-    if (fontCss !== null) return fontCss;
+  async function printReport(r, asPdf) {
+    const L = T[lang];
+    buildReport(r);
     try {
-      const css = await (await fetch('fonts.css')).text();
-      const urls = [...new Set([...css.matchAll(/url\((['"]?)([^'")]+)\1\)/g)].map((m) => m[2]))];
-      let out = css;
-      for (const u of urls) {
-        const blob = await (await fetch(u)).blob();
-        const data = await new Promise((ok) => { const fr = new FileReader(); fr.onload = () => ok(fr.result); fr.readAsDataURL(blob); });
-        out = out.split(u).join(data);
+      if (document.fonts) {
+        await Promise.all(['400', '500', '700'].map((w) => document.fonts.load(`${w} 16px Tajawal`, 'أب')));
+        await document.fonts.ready;
       }
-      fontCss = out;
-    } catch (e) { fontCss = ''; }
-    return fontCss;
+    } catch (e) {}
+    const title = document.title;
+    // the browser uses the page title as the PDF file name
+    document.title = (r.proj ? r.proj.replace(/[\\/:*?"<>|]/g, '') + ' - ' : '') + fileBase();
+    if (asPdf) alertBox(L.pdfHint, 'var(--ink-2)');
+    window.addEventListener('afterprint', () => { document.title = title; }, { once: true });
+    window.print();
+    setTimeout(() => { document.title = title; }, 4000);
   }
 
-  async function downloadPdf(r) {
-    const L = T[lang], b = $('btn-pdf'), label = b.innerHTML;
-    b.disabled = true; b.textContent = L.working;
-    const el = buildReport(r);
-    const cover = document.createElement('div'); cover.className = 'cover'; cover.textContent = L.working;
-    document.body.appendChild(cover);
-    const rootDir = document.documentElement.dir, sx = window.scrollX, sy = window.scrollY;
-    document.documentElement.dir = 'ltr';   // the renderer measures from the left; the report keeps its own dir
-    window.scrollTo(0, 0);
-    el.classList.add('rendering');
-    try {
-      await loadPdfLib();
-      const fc = await embeddedFonts();
-      if (fc) { const st = document.createElement('style'); st.textContent = fc; el.firstElementChild.prepend(st); }
-      if (document.fonts && document.fonts.ready) await document.fonts.ready;
-      const node = el.firstElementChild;
-      const canvas = await window.html2canvas(node, { scale: 2, backgroundColor: '#ffffff', foreignObjectRendering: true, logging: false });
-      const pdf = new window.jspdf.jsPDF({ unit: 'pt', format: 'a4', orientation: 'portrait' });
-      const pw = pdf.internal.pageSize.getWidth(), ph = pdf.internal.pageSize.getHeight();
-      const h = canvas.height * pw / canvas.width;
-      const img = canvas.toDataURL('image/jpeg', 0.95);
-      if (h <= ph * 1.02) pdf.addImage(img, 'JPEG', 0, 0, pw, Math.min(h, ph));
-      else { let y = 0; while (y < h) { if (y) pdf.addPage(); pdf.addImage(img, 'JPEG', 0, -y, pw, h); y += ph; } }
-      pdf.save(fileBase() + '.pdf');
-    } catch (e) {
-      alertBox(L.pdfFail);
-    } finally {
-      el.classList.remove('rendering'); cover.remove();
-      document.documentElement.dir = rootDir;
-      window.scrollTo(sx, sy);
-      const nb = $('btn-pdf'); if (nb) { nb.disabled = false; nb.innerHTML = label; }
-    }
-  }
-
-  function alertBox(msg) {
+  function alertBox(msg, color) {
     const c = $('copied'); if (!c) return;
-    c.textContent = msg; c.style.color = 'var(--bad)'; c.hidden = false;
+    c.textContent = msg; c.style.color = color || 'var(--bad)'; c.hidden = false;
     setTimeout(() => { c.hidden = true; c.style.color = ''; c.textContent = T[lang].copied; }, 6000);
   }
 
