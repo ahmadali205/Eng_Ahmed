@@ -7,9 +7,7 @@
 <meta name="description" content="Free Earned Value tool by Eng. Ahmed Ali: see if a project is late or over budget, its forecast finish date and final cost, and the monthly progress needed to finish on time.">
 <link rel="icon" href="../../favicon.svg" type="image/svg+xml">
 <style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font-size:14px}img{max-width:100%}[hidden]{display:none!important}</style>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Tajawal:wght@400;500;700&family=Source+Sans+3:wght@400;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="fonts.css">
 <style>
 /* Layout: a site-report sheet. Inputs panel on one side, verdict + KPIs + S-curve on the other; stacks on phones. Navy/gold to match the portfolio. */
 :root {
@@ -739,7 +737,7 @@ html[lang="ar"] .report { font-family: var(--font-ar); }
     // the chart and bars read --tone from the verdict; mirror it on the results box
     box.style.setProperty('--tone', `var(--${r.tone === 'good' ? 'good' : r.tone === 'warn' ? 'warn' : 'bad'})`);
 
-    $('btn-print').addEventListener('click', () => { buildReport(r); window.print(); });
+    $('btn-print').addEventListener('click', async () => { buildReport(r); try { if (document.fonts) { await Promise.all(['400', '500', '700'].map((w) => document.fonts.load(`${w} 16px Tajawal`, 'أب'))); await document.fonts.ready; } } catch (e) {} window.print(); });
     $('btn-pdf').addEventListener('click', () => downloadPdf(r));
     $('btn-xls').addEventListener('click', () => exportCsv(r));
     $('copy').addEventListener('click', () => {
@@ -823,6 +821,25 @@ html[lang="ar"] .report { font-family: var(--font-ar); }
     return Promise.all(LIBS.map(([g, local, cdn]) => window[g] ? null : addScript(local).catch(() => addScript(cdn))));
   }
 
+  // The PDF renderer draws the report as an image, which cannot fetch font files,
+  // so the fonts are embedded into the report as data URIs.
+  let fontCss = null;
+  async function embeddedFonts() {
+    if (fontCss !== null) return fontCss;
+    try {
+      const css = await (await fetch('fonts.css')).text();
+      const urls = [...new Set([...css.matchAll(/url\((['"]?)([^'")]+)\1\)/g)].map((m) => m[2]))];
+      let out = css;
+      for (const u of urls) {
+        const blob = await (await fetch(u)).blob();
+        const data = await new Promise((ok) => { const fr = new FileReader(); fr.onload = () => ok(fr.result); fr.readAsDataURL(blob); });
+        out = out.split(u).join(data);
+      }
+      fontCss = out;
+    } catch (e) { fontCss = ''; }
+    return fontCss;
+  }
+
   async function downloadPdf(r) {
     const L = T[lang], b = $('btn-pdf'), label = b.innerHTML;
     b.disabled = true; b.textContent = L.working;
@@ -835,6 +852,8 @@ html[lang="ar"] .report { font-family: var(--font-ar); }
     el.classList.add('rendering');
     try {
       await loadPdfLib();
+      const fc = await embeddedFonts();
+      if (fc) { const st = document.createElement('style'); st.textContent = fc; el.firstElementChild.prepend(st); }
       if (document.fonts && document.fonts.ready) await document.fonts.ready;
       const node = el.firstElementChild;
       const canvas = await window.html2canvas(node, { scale: 2, backgroundColor: '#ffffff', foreignObjectRendering: true, logging: false });
