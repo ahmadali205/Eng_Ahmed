@@ -153,6 +153,78 @@ footer a:hover { text-decoration: underline; }
 .method { max-width: 70ch; }
 
 @media (prefers-reduced-motion: reduce) { .bar .fill { transition: none; } }
+.opt { border: 1px dashed var(--line); border-radius: 8px; padding: 0 12px; background: var(--surface-2); }
+.opt[open] { padding-bottom: 12px; }
+.opt summary { cursor: pointer; padding: 10px 0; font-size: 13.5px; font-weight: 600; color: var(--ink); list-style: none; display: flex; justify-content: space-between; gap: 8px; }
+.opt summary::-webkit-details-marker { display: none; }
+.opt summary::after { content: "+"; color: var(--gold); font-weight: 700; }
+.opt[open] summary::after { content: "−"; }
+.opt .tag { font-size: 11.5px; font-weight: 600; color: var(--good); }
+.opt-body { display: grid; gap: 12px; }
+.opt input { background: var(--surface); }
+.basis { font-size: 12.5px; color: var(--ink-2); display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.basis .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--warn); }
+.basis.sharp .dot { background: var(--good); }
+.actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.btn { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--ink); background: var(--ink); color: var(--bg); font: 600 13px inherit; font-family: inherit; padding: 7px 14px; border-radius: 7px; cursor: pointer; }
+.btn.alt { background: transparent; color: var(--ink); border-color: var(--line); }
+.btn:hover { border-color: var(--gold); }
+.btn[disabled] { opacity: .6; cursor: wait; }
+.btn svg { width: 15px; height: 15px; }
+.profit { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 640px) { .profit { grid-template-columns: minmax(0, 1fr); } }
+.profit > div { display: grid; gap: 3px; padding: 12px; border-radius: 8px; background: var(--surface-2); border: 1px solid var(--line); min-width: 0; }
+.profit .k { font-size: 12.5px; color: var(--ink-2); font-weight: 600; }
+.profit .v { font: 700 19px var(--font-display); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+html[lang="ar"] .profit .v { font-family: var(--font-ar); }
+.profit .v.pos { color: var(--good); } .profit .v.neg { color: var(--bad); }
+.profit .s { font-size: 12.5px; color: var(--ink-2); }
+.profit .hl { border-color: var(--tone); background: var(--surface); }
+.disclaimer { font-size: 12.5px; color: var(--ink-2); margin: 0; padding: 10px 12px; border-radius: 8px; background: var(--surface-2); border: 1px solid var(--line); }
+
+/* ---------- printable report ---------- */
+#report { display: none; }
+.report { --bg: #ffffff; --surface: #ffffff; --surface-2: #f4f6f9; --ink: #0f1f38; --ink-2: #4a5a74; --line: #d8dfe9; --gold: #9d7a2e; --plan: #7d8ca5;
+  --good: #1f7a4d; --good-bg: #e3f3ea; --warn: #a8640a; --warn-bg: #fbf0dc; --bad: #b3392b; --bad-bg: #f9e4e1;
+  background: #fff; color: var(--ink); width: 794px; padding: 30px 36px; font-size: 11.5px; line-height: 1.45; display: grid; gap: 11px; color-scheme: light; }
+html[lang="ar"] .report { font-family: var(--font-ar); }
+.report[data-tone="good"] { --tone: var(--good); --tone-bg: var(--good-bg); }
+.report[data-tone="warn"] { --tone: var(--warn); --tone-bg: var(--warn-bg); }
+.report[data-tone="bad"] { --tone: var(--bad); --tone-bg: var(--bad-bg); }
+.r-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; border-bottom: 3px solid #13284a; padding-bottom: 12px; }
+.r-head h1 { font-size: 24px; margin: 0; }
+.r-head .r-proj { font-size: 15px; font-weight: 700; color: var(--gold); }
+.r-meta { white-space: nowrap; text-align: end; font-size: 11.5px; color: var(--ink-2); }
+.r-meta b { color: var(--ink); }
+.r-verdict { border: 1px solid var(--line); border-inline-start: 6px solid var(--tone); background: var(--tone-bg); border-radius: 8px; padding: 12px 14px; }
+.r-verdict .vlabel { font-size: 16px; }
+.r-verdict p { margin: 4px 0 0; font-size: 13.5px; line-height: 1.7; }
+.r-verdict b { color: var(--tone); }
+.r-kpis { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+.r-kpis div { border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; display: grid; gap: 2px; }
+.r-kpis span { font-size: 11px; color: var(--ink-2); }
+.r-kpis strong { font-size: 13px; line-height: 1.35; }
+.r-two { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.report h2 { font-size: 13px; margin: 0 0 6px; color: #13284a; }
+.report table { width: 100%; border-collapse: collapse; }
+.report td { padding: 4px 0; border-bottom: 1px solid var(--line); }
+.report td:last-child { text-align: end; font-variant-numeric: tabular-nums; }
+.report .chart svg { min-width: 0; max-height: 190px; }
+.report td { padding: 3px 0; }
+.report td:first-child { padding-inline-end: 8px; }
+.r-foot span { white-space: nowrap; }
+.r-foot { display: flex; justify-content: space-between; gap: 12px; font-size: 10.5px; color: var(--ink-2); border-top: 1px solid var(--line); padding-top: 8px; }
+#report.rendering { display: block; position: absolute; top: 0; left: 0; z-index: 1; }
+.cover { position: fixed; inset: 0; z-index: 50; background: var(--bg); display: grid; place-items: center; font-size: 16px; font-weight: 600; color: var(--ink); }
+@media print {
+  @page { size: A4; margin: 0; }
+  body { background: #fff !important; }
+  #app { display: none !important; }
+  #report { display: block !important; }
+  .report { width: auto; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+
 @media (max-width: 480px) { .bar { grid-template-columns: 84px minmax(0, 1fr) 56px; } .kpi .v { font-size: 20px; } }
 </style>
 
@@ -181,6 +253,12 @@ footer a:hover { text-decoration: underline; }
       <h2><span data-i18n="inputs"></span><button type="button" class="ghost" id="sample" data-i18n="sample"></button></h2>
 
       <div class="field">
+        <label for="proj" data-i18n="proj"></label>
+        <input id="proj" style="font-family: inherit">
+      </div>
+
+
+      <div class="field">
         <label for="bac" data-i18n="bac"></label>
         <div class="money">
           <input id="bac" inputmode="decimal" dir="ltr">
@@ -188,6 +266,12 @@ footer a:hover { text-decoration: underline; }
             <option value="SAR">SAR</option><option value="EGP">EGP</option><option value="AED">AED</option><option value="USD">USD</option>
           </select>
         </div>
+      </div>
+
+      <div class="field">
+        <label for="margin" data-i18n="margin"></label>
+        <input id="margin" inputmode="decimal" dir="ltr" placeholder="%">
+        <span class="hint" data-i18n="marginHint"></span>
       </div>
 
       <div class="row2">
@@ -206,6 +290,7 @@ footer a:hover { text-decoration: underline; }
       <div class="field">
         <label for="ac" data-i18n="ac"></label>
         <input id="ac" inputmode="decimal" dir="ltr">
+        <span class="hint" data-i18n="acHint"></span>
       </div>
 
       <div class="divider"></div>
@@ -224,6 +309,28 @@ footer a:hover { text-decoration: underline; }
         </div>
         <span class="hint" data-i18n="curveHint"></span>
       </div>
+
+      <details class="opt" id="opt">
+        <summary><span data-i18n="optTitle"></span></summary>
+        <div class="opt-body">
+          <span class="hint" data-i18n="optHint"></span>
+          <div class="field">
+            <label for="pv" data-i18n="pvIn"></label>
+            <input id="pv" inputmode="decimal" dir="ltr" placeholder="%">
+            <span class="hint" data-i18n="pvHint"></span>
+          </div>
+          <div class="field">
+            <label for="bac2" data-i18n="bac2"></label>
+            <input id="bac2" inputmode="decimal" dir="ltr">
+            <span class="hint" data-i18n="bac2Hint"></span>
+          </div>
+          <div class="field">
+            <label for="finish2" data-i18n="finish2"></label>
+            <input type="date" id="finish2" dir="ltr">
+            <span class="hint" data-i18n="finish2Hint"></span>
+          </div>
+        </div>
+      </details>
     </form>
 
     <section class="results" id="results" aria-live="polite"></section>
@@ -234,6 +341,7 @@ footer a:hover { text-decoration: underline; }
     <span><a href="../../" data-i18n="name"></a></span>
   </footer>
 </div>
+<div id="report" aria-hidden="true"></div>
 
 <script>
 (function () {
@@ -249,14 +357,14 @@ footer a:hover { text-decoration: underline; }
       status: 'تاريخ التقرير', statusHint: 'اليوم افتراضيًا. غيّره لو تحسب لتاريخ تقرير سابق.',
       curve: 'شكل الخطة', curveS: 'منحنى S', curveL: 'خطي',
       curveHint: 'معظم المشاريع تتبع منحنى S: بطء في البداية والنهاية، وذروة في المنتصف.',
-      method: 'الحساب بطريقة القيمة المكتسبة (EVM) والجدول المكتسب (Earned Schedule). القيمة المخططة مأخوذة من شكل الخطة المختار، والتوقعات تفترض استمرار نفس الأداء.',
+      method: 'الحساب بطريقة القيمة المكتسبة (EVM) والجدول المكتسب (Earned Schedule). القيمة المخططة من البرنامج الزمني لو أدخلتها، وإلا من شكل الخطة المختار. والتكلفة النهائية تظهر كمدى بين طريقتين معتمدتين لحساب EAC (CPI، و CPI × SPI).',
       madeBy: 'من تطوير', name: 'م. أحمد علي',
       tone: { good: 'المشروع بحالة جيدة', warn: 'يحتاج متابعة', bad: 'في خطر' },
       copy: 'نسخ الملخص للتقرير', copied: 'تم النسخ',
       kSched: 'الموقف الزمني', kCost: 'الموقف المالي', kFinish: 'التاريخ المتوقع للتسليم', kEac: 'التكلفة المتوقعة في النهاية',
       late: 'متأخر', early: 'متقدم', onTime: 'على الخطة', days: 'يوم',
       over: 'فوق الميزانية', under: 'تحت الميزانية', onBudget: 'على الميزانية',
-      vsPlanned: (d) => `مقابل ${d} المخطط`, vsBac: (d) => `مقابل ${d} قيمة العقد`,
+      vsPlanned: (d) => `مقابل ${d} المخطط`, vsBac: (d) => `مقابل ميزانية ${d}`,
       planned: 'مخطط اليوم', earned: 'قيمة المنفذ',
       rateTitle: 'الإنجاز الشهري المطلوب للتسليم في الموعد',
       rateNow: 'المعدل الحالي', rateReq: 'المطلوب',
@@ -281,6 +389,37 @@ footer a:hover { text-decoration: underline; }
       sPassed: ' موعد التسليم المخطط مضى، والمطلوب خطة تعافٍ معتمدة.',
       million: 'مليون', thousand: 'ألف', billion: 'مليار',
       cur: { SAR: 'ر.س', EGP: 'ج.م', AED: 'د.إ', USD: '$' },
+      proj: 'اسم المشروع (اختياري، يظهر في رأس التقرير)',
+      margin: 'هامش الربح المخطط %',
+      marginHint: 'نسبة الربح المتوقعة في التسعير. ميزانية التكلفة = قيمة العقد ناقص الهامش. اتركه فاضي لو الميزانية = قيمة العقد.',
+      errMargin: 'هامش الربح لازم يكون من 0 إلى أقل من 100.',
+      pTitle: 'الربح والخسارة', pPlan: 'الربح المخطط', pFore: 'الربح المتوقع عند الانتهاء', pForeLoss: 'الخسارة المتوقعة عند الانتهاء', pNow: 'الربح حتى اليوم', pNowLoss: 'الخسارة حتى اليوم',
+      pMargin: (m) => `هامش ${m}% من قيمة العقد`, pNowNote: 'قيمة الأعمال المنفذة بسعر العقد ناقص المصروف.',
+      budget: 'ميزانية التكلفة',
+      upTo: 'إلى',
+      sProfit: (v, m) => ` الربح المتوقع <b>${v} (${m}%)</b>.`, sLoss: (v, m) => ` <b>خسارة متوقعة ${v} (${m}%)</b>.`,
+      acHint: 'بدون الدفعات المقدمة وقيمة المواد غير المركّبة.',
+      optTitle: 'لنتيجة أدق (اختياري)',
+      optHint: 'كل خانة تملؤها هنا تقرّب النتيجة من الواقع. سيبها فاضية لو مش متاحة.',
+      pvIn: 'نسبة المخطط حتى تاريخ التقرير %',
+      pvHint: 'من البرنامج الزمني المعتمد (P6). لو كتبتها تُستخدم بدل المنحنى المفترض.',
+      bac2: 'قيمة العقد بعد أوامر التغيير',
+      bac2Hint: 'تُستخدم بدل قيمة العقد الأصلية.',
+      finish2: 'تاريخ النهاية بعد التمديد المعتمد',
+      finish2Hint: 'يُستخدم بدل تاريخ النهاية الأصلي.',
+      basisAssumed: (c) => `الخطة: ${c} مفترض. أدخل نسبة المخطط من البرنامج الزمني لنتيجة أدق.`,
+      basisReal: (v) => `الخطة: من البرنامج الزمني (${v}% حتى تاريخ التقرير).`,
+      curveNameS: 'منحنى S', curveNameL: 'توزيع خطي',
+      errPv: 'نسبة المخطط لازم تكون أكبر من 0 وحتى 100.',
+      errPvLate: 'نسبة المخطط أقل من 100% رغم إن تاريخ النهاية عدّى. أدخل تاريخ النهاية بعد التمديد.',
+      eacRange: (a, b) => `بين ${a} و ${b}`,
+      eacRangeNote: 'الرقم الأعلى لو التأخير زوّد التكلفة كمان.',
+      sForeRange: (date, a, b) => ` لو استمر بنفس الأداء سينتهي في <b>${date}</b> بتكلفة نهائية بين <b>${a}</b> و <b>${b}</b>.`,
+      disclaimer: 'النتائج تقديرية للمتابعة السريعة، ومبنية على الأرقام المُدخلة واستمرار نفس الأداء. لا تُغني عن تحليل البرنامج الزمني ومراجعة التكاليف التفصيلية.',
+      print: 'طباعة التقرير', pdf: 'تحميل PDF', excel: 'تصدير Excel', working: 'جاري التجهيز…', pdfFail: 'تعذّر إنشاء الملف. استخدم "طباعة التقرير" واختر حفظ كـ PDF.',
+      rTitle: 'تقرير صحة المشروع', rDate: 'تاريخ التقرير', rIssued: 'تاريخ الإصدار', rInputs: 'البيانات المُدخلة', rResults: 'النتائج',
+      rPlanBasis: 'أساس الخطة', rReq: 'الإنجاز الشهري المطلوب', rCurRate: 'الإنجاز الشهري الحالي', rPrepared: 'أُعدّ بأداة فحص صحة المشروع · م. أحمد علي',
+      xField: 'البند', xValue: 'القيمة',
       month: 'شهر'
     },
     en: {
@@ -294,14 +433,14 @@ footer a:hover { text-decoration: underline; }
       status: 'Report date', statusHint: 'Today by default. Change it to check an earlier report.',
       curve: 'Plan shape', curveS: 'S-curve', curveL: 'Linear',
       curveHint: 'Most projects follow an S-curve: slow start and finish, peak in the middle.',
-      method: 'Calculated with Earned Value Management (EVM) and Earned Schedule. Planned value comes from the selected plan shape; forecasts assume current performance continues.',
+      method: 'Calculated with Earned Value Management (EVM) and Earned Schedule. Planned value comes from your schedule when entered, otherwise from the selected plan shape. Final cost is shown as a range of two standard EAC methods (CPI, and CPI × SPI).',
       madeBy: 'Built by', name: 'Eng. Ahmed Ali',
       tone: { good: 'Healthy', warn: 'Needs attention', bad: 'At risk' },
       copy: 'Copy summary for report', copied: 'Copied',
       kSched: 'Schedule', kCost: 'Cost', kFinish: 'Forecast finish', kEac: 'Forecast final cost',
       late: 'late', early: 'ahead', onTime: 'On plan', days: 'days',
       over: 'over budget', under: 'under budget', onBudget: 'On budget',
-      vsPlanned: (d) => `vs planned ${d}`, vsBac: (d) => `vs contract ${d}`,
+      vsPlanned: (d) => `vs planned ${d}`, vsBac: (d) => `vs budget ${d}`,
       planned: 'Planned today', earned: 'Work done',
       rateTitle: 'Monthly progress needed to finish on time',
       rateNow: 'Current rate', rateReq: 'Required',
@@ -326,13 +465,44 @@ footer a:hover { text-decoration: underline; }
       sPassed: ' The planned finish has passed; an approved recovery plan is needed.',
       million: 'M', thousand: 'K', billion: 'B',
       cur: { SAR: 'SAR', EGP: 'EGP', AED: 'AED', USD: '$' },
+      proj: 'Project name (optional, shown in the report header)',
+      margin: 'Planned profit margin %',
+      marginHint: 'Profit built into the price. Cost budget = contract value minus the margin. Leave blank if the budget equals the contract value.',
+      errMargin: 'Profit margin must be from 0 to below 100.',
+      pTitle: 'Profit and loss', pPlan: 'Planned profit', pFore: 'Forecast profit at completion', pForeLoss: 'Forecast loss at completion', pNow: 'Profit to date', pNowLoss: 'Loss to date',
+      pMargin: (m) => `${m}% margin on contract value`, pNowNote: 'Work done at contract rates minus cost spent.',
+      budget: 'Cost budget',
+      upTo: 'to',
+      sProfit: (v, m) => ` Forecast profit is <b>${v} (${m}%)</b>.`, sLoss: (v, m) => ` <b>Forecast loss of ${v} (${m}%)</b>.`,
+      acHint: 'Exclude advance payments and materials not yet installed.',
+      optTitle: 'For a more accurate result (optional)',
+      optHint: 'Each field you fill brings the result closer to reality. Leave blank if not available.',
+      pvIn: 'Planned % at report date',
+      pvHint: 'From the approved schedule (P6). When filled, it replaces the assumed curve.',
+      bac2: 'Contract value after change orders',
+      bac2Hint: 'Replaces the original contract value.',
+      finish2: 'Finish date after approved extension',
+      finish2Hint: 'Replaces the original planned finish.',
+      basisAssumed: (c) => `Plan: assumed ${c}. Enter the planned % from your schedule for a sharper result.`,
+      basisReal: (v) => `Plan: from your schedule (${v}% at report date).`,
+      curveNameS: 'S-curve', curveNameL: 'linear spread',
+      errPv: 'Planned % must be above 0 and up to 100.',
+      errPvLate: 'Planned % is below 100% although the planned finish has passed. Enter the extended finish date.',
+      eacRange: (a, b) => `${a} to ${b}`,
+      eacRangeNote: 'The higher figure applies if the delay also drives cost up.',
+      sForeRange: (date, a, b) => ` At the current performance it will finish on <b>${date}</b> at a final cost between <b>${a}</b> and <b>${b}</b>.`,
+      disclaimer: 'Results are estimates for quick monitoring, based on the figures entered and on current performance continuing. They do not replace a full schedule analysis or detailed cost review.',
+      print: 'Print report', pdf: 'Download PDF', excel: 'Export Excel', working: 'Preparing…', pdfFail: 'Could not create the file. Use "Print report" and choose Save as PDF.',
+      rTitle: 'Project Health Report', rDate: 'Report date', rIssued: 'Issued', rInputs: 'Inputs', rResults: 'Results',
+      rPlanBasis: 'Plan basis', rReq: 'Required monthly progress', rCurRate: 'Current monthly progress', rPrepared: 'Prepared with the Project Health Check tool · Eng. Ahmed Ali',
+      xField: 'Item', xValue: 'Value',
       month: 'mo'
     }
   };
 
   const DAY = 86400000, MONTH = 30.4375;
   const $ = (id) => document.getElementById(id);
-  let lang = 'ar', curve = 's', lastSummary = '';
+  let lang = 'ar', curve = 's', lastSummary = '', lastResult = null;
 
   function store(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
   function load(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
@@ -370,25 +540,46 @@ footer a:hover { text-decoration: underline; }
     return (lo + hi) / 2;
   }
 
+  // K bends the plan curve so it passes through the planned % the user took from the schedule
+  let K = 1;
+  const planK = (x) => plan(Math.pow(Math.min(1, Math.max(0, x)), K));
+  const planKInv = (p) => Math.pow(planInv(p), 1 / K);
+
   function compute() {
     const L = T[lang];
-    const BAC = num($('bac').value), AC = num($('ac').value), p = num($('pct').value) / 100;
-    const S = parseDate($('start').value), F = parseDate($('finish').value), R = parseDate($('status').value);
-    if (!(BAC > 0)) return { err: L.errBac };
+    const bac2 = num($('bac2').value), pvRaw = $('pv').value.trim(), F2 = parseDate($('finish2').value);
+    const BAC0 = num($('bac').value), F0 = parseDate($('finish').value);
+    const CON = bac2 > 0 ? bac2 : BAC0, AC = num($('ac').value), p = num($('pct').value) / 100;
+    const S = parseDate($('start').value), R = parseDate($('status').value);
+    const F = F2 && S && F2 > S ? F2 : F0;
+    const pvIn = pvRaw === '' ? null : num(pvRaw) / 100;
+    if (!(CON > 0)) return { err: L.errBac };
+    const mRaw = $('margin').value.trim(), m = mRaw === '' ? 0 : num(mRaw) / 100;
+    if (!(m >= 0 && m < 1)) return { err: L.errMargin };
+    const BAC = CON * (1 - m);               // cost budget
     if (!S || !F || F <= S) return { err: L.errDates };
     if (!R || R <= S) return { err: L.errStatus };
     if (!(p >= 0 && p <= 1)) return { err: L.errPct };
     if (!(AC > 0)) return { err: L.errAc };
     if (p === 0) return { err: L.errZero };
+    if (pvIn !== null && !(pvIn > 0 && pvIn <= 1)) return { err: L.errPv };
 
     const D = (F - S) / DAY, t = (R - S) / DAY;
-    const pvPct = plan(t / D), PV = pvPct * BAC, EV = p * BAC;
-    const ES = planInv(p) * D;                 // earned schedule, days
+    K = 1;
+    if (pvIn !== null) {
+      if (t >= D && pvIn < 1) return { err: L.errPvLate };
+      if (t < D && pvIn < 1) K = Math.min(6, Math.max(1 / 6, Math.log(planInv(pvIn)) / Math.log(t / D)));
+    }
+    const pvPct = pvIn !== null && t < D ? pvIn : planK(t / D), PV = pvPct * BAC, EV = p * BAC;
+    const ES = planKInv(p) * D;                // earned schedule, days
     const delay = Math.round(t - ES);          // + = behind
     const SPIt = ES / t, SPI = PV > 0 ? EV / PV : 1, CPI = EV / AC;
     const IEAC = D / SPIt;                      // forecast duration
     const FF = new Date(S.getTime() + Math.round(IEAC) * DAY);
     const EAC = BAC / CPI, VAC = BAC - EAC, CV = EV - AC;
+    // second method: remaining work also slowed by schedule performance (PMI composite)
+    const EAC2 = AC + (BAC - EV) / (CPI * Math.min(1, SPIt));
+    const eacLo = Math.min(EAC, EAC2), eacHi = Math.max(EAC, EAC2);
     const TCPI = BAC - AC > 0 ? (BAC - EV) / (BAC - AC) : Infinity;
     const monthsLeft = (F - R) / DAY / MONTH;
     const curRate = p * 100 / (t / MONTH);
@@ -396,7 +587,9 @@ footer a:hover { text-decoration: underline; }
 
     const score = Math.min(SPIt, CPI);
     const tone = p >= 1 && CPI >= 0.95 ? 'good' : score >= 0.95 ? 'good' : score >= 0.85 ? 'warn' : 'bad';
-    return { BAC, AC, p, S, F, R, D, t, PV, EV, pvPct, ES, delay, SPIt, SPI, CPI, IEAC, FF, EAC, VAC, CV, TCPI, monthsLeft, curRate, reqRate, tone };
+    const profitPlan = CON - BAC, profitNow = p * CON - AC;
+    const profitLo = CON - eacHi, profitHi = CON - eacLo, profitMid = CON - EAC;
+    return { CON, m, profitPlan, profitNow, profitLo, profitHi, profitMid, BAC0, F0, pvIn, eacLo, eacHi, proj: $('proj').value.trim(), BAC, AC, p, S, F, R, D, t, PV, EV, pvPct, ES, delay, SPIt, SPI, CPI, IEAC, FF, EAC, VAC, CV, TCPI, monthsLeft, curRate, reqRate, tone };
   }
 
   const pillFor = (v) => v >= 0.95 ? 'good' : v >= 0.85 ? 'warn' : 'bad';
@@ -408,18 +601,18 @@ footer a:hover { text-decoration: underline; }
     const X = (d) => l + (d / maxX) * (W - l - rt);
     const Y = (v) => tp + (1 - v) * (H - tp - b);
     let planPath = '';
-    for (let i = 0; i <= 80; i++) { const d = r.D * i / 80; planPath += (i ? 'L' : 'M') + X(d).toFixed(1) + ' ' + Y(plan(d / r.D)).toFixed(1); }
+    for (let i = 0; i <= 80; i++) { const d = r.D * i / 80; planPath += (i ? 'L' : 'M') + X(d).toFixed(1) + ' ' + Y(planK(d / r.D)).toFixed(1); }
     // actual progress drawn on the same S shape, compressed to reach p at t
     let actPath = '';
-    const e = planInv(r.p);
-    for (let i = 0; i <= 40; i++) { const f = i / 40; actPath += (i ? 'L' : 'M') + X(r.t * f).toFixed(1) + ' ' + Y(plan(e * f)).toFixed(1); }
+    const e = planKInv(r.p);
+    for (let i = 0; i <= 40; i++) { const f = i / 40; actPath += (i ? 'L' : 'M') + X(r.t * f).toFixed(1) + ' ' + Y(planK(e * f)).toFixed(1); }
     let forePath = '';
     if (r.p < 1) {
       const end = Math.min(r.IEAC, maxX);
       for (let i = 0; i <= 40; i++) {
         const d = r.t + (end - r.t) * i / 40;
         const sh = Math.min(1, e + (1 - e) * ((d - r.t) / (r.IEAC - r.t)));
-        forePath += (i ? 'L' : 'M') + X(d).toFixed(1) + ' ' + Y(plan(sh)).toFixed(1);
+        forePath += (i ? 'L' : 'M') + X(d).toFixed(1) + ' ' + Y(planK(sh)).toFixed(1);
       }
     }
     let grid = '';
@@ -448,6 +641,21 @@ footer a:hover { text-decoration: underline; }
 </svg>`;
   }
 
+  function profitCard(r, ranged) {
+    const L = T[lang];
+    const pm = (v) => fmt1(v / r.CON * 100);
+    const sign = (v) => (v < 0 ? '−' : '') + money(Math.abs(v));
+    const cls = (v) => (v < 0 ? 'neg' : 'pos');
+    const loss = r.profitHi < 0;
+    const foreV = ranged ? `${sign(r.profitLo)}<br><span style="font-size:13px;font-weight:500">${L.upTo}</span> ${sign(r.profitHi)}` : sign(r.profitMid);
+    const foreS = ranged ? `${pm(r.profitLo)}% … ${pm(r.profitHi)}%` : L.pMargin(pm(r.profitMid));
+    return `<div class="card"><h3>${L.pTitle}</h3><div class="profit">
+      <div><span class="k">${L.pPlan}</span><span class="v">${money(r.profitPlan)}</span><span class="s">${L.pMargin(fmt1(r.m * 100))}<br>${L.budget} ${money(r.BAC)}</span></div>
+      <div class="hl"><span class="k">${loss ? L.pForeLoss : L.pFore}</span><span class="v ${ranged ? (r.profitLo < 0 ? (loss ? 'neg' : '') : 'pos') : cls(r.profitMid)}">${foreV}</span><span class="s">${foreS}</span></div>
+      <div><span class="k">${r.profitNow < 0 ? L.pNowLoss : L.pNow}</span><span class="v ${cls(r.profitNow)}">${sign(r.profitNow)}</span><span class="s">${L.pNowNote}</span></div>
+    </div></div>`;
+  }
+
   function render() {
     const L = T[lang], box = $('results');
     const r = compute();
@@ -456,7 +664,17 @@ footer a:hover { text-decoration: underline; }
     const cvTxt = money(Math.abs(r.CV));
     const over = r.CV < 0;
     let sentence = L.sSched(r.delay) + L.sCost(Math.abs(r.CV) < 0.005 * r.BAC ? 0 : cvTxt, over);
-    if (r.p < 1) sentence += L.sFore(dateTxt(r.FF), money(r.EAC));
+    const ranged = r.eacHi - r.eacLo > 0.01 * r.BAC;
+    if (r.p < 1) sentence += ranged ? L.sForeRange(dateTxt(r.FF), money(r.eacLo), money(r.eacHi)) : L.sFore(dateTxt(r.FF), money(r.EAC));
+    {
+      const pm = (v) => fmt1(Math.abs(v) / r.CON * 100);
+      if (r.m > 0 || r.profitMid < 0) {
+        if (ranged && r.profitLo >= 0) sentence += L.sProfit(`${money(r.profitLo)} – ${money(r.profitHi)}`, `${pm(r.profitLo)}–${pm(r.profitHi)}`);
+        else if (ranged && r.profitHi < 0) sentence += L.sLoss(`${money(-r.profitHi)} – ${money(-r.profitLo)}`, `${pm(r.profitHi)}–${pm(r.profitLo)}`);
+        else if (!ranged) sentence += r.profitMid >= 0 ? L.sProfit(money(r.profitMid), pm(r.profitMid)) : L.sLoss(money(-r.profitMid), pm(r.profitMid));
+        else sentence += L.sProfit(`${r.profitLo < 0 ? '−' : ''}${money(Math.abs(r.profitLo))} – ${money(r.profitHi)}`, `${r.profitLo < 0 ? '−' : ''}${pm(r.profitLo)}–${pm(r.profitHi)}`);
+      }
+    }
     if (r.p < 1) sentence += r.reqRate != null ? L.sReq(fmt1(r.curRate), fmt1(r.reqRate)) : L.sPassed;
     lastSummary = sentence.replace(/<[^>]+>/g, '');
 
@@ -478,14 +696,24 @@ footer a:hover { text-decoration: underline; }
       <div class="verdict" data-tone="${r.tone}" id="verdict">
         <div class="vhead"><span class="light" aria-hidden="true"><i></i><i></i><i></i></span><span class="vlabel">${L.tone[r.tone]}</span></div>
         <p class="sentence">${sentence}</p>
-        <div class="vfoot"><button type="button" class="ghost" id="copy">${L.copy}</button><span class="copied" id="copied" hidden>${L.copied}</span></div>
+        <div class="basis${r.pvIn !== null ? ' sharp' : ''}"><span class="dot"></span>${r.pvIn !== null ? L.basisReal(fmt1(r.pvIn * 100)) : L.basisAssumed(curve === 's' ? L.curveNameS : L.curveNameL)}</div>
+        <div class="vfoot">
+          <div class="actions">
+            <button type="button" class="btn" id="btn-print"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V3h12v6M6 18H4a1 1 0 0 1-1-1v-6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v6a1 1 0 0 1-1 1h-2M6 14h12v7H6z"/></svg>${L.print}</button>
+            <button type="button" class="btn alt" id="btn-pdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0-4-4m4 4 4-4M5 21h14"/></svg>${L.pdf}</button>
+            <button type="button" class="btn alt" id="btn-xls"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4zM4 10h16M4 15h16M10 4v16"/></svg>${L.excel}</button>
+            <button type="button" class="ghost" id="copy">${L.copy}</button>
+          </div>
+          <span class="copied" id="copied" hidden>${L.copied}</span>
+        </div>
       </div>
       <div class="kpis">
         <div class="kpi"><span class="k">${L.kSched}</span><span class="v">${schedV}</span>${schedS ? `<span class="pill ${pillFor(r.SPIt)}">${schedS}</span>` : ''}<span class="s">${L.planned} ${fmt1(r.pvPct * 100)}% · ${L.earned} ${fmt1(r.p * 100)}%</span></div>
         <div class="kpi"><span class="k">${L.kCost}</span><span class="v">${costV}</span>${costS ? `<span class="pill ${pillFor(r.CPI)}">${costS}</span>` : ''}<span class="s">${L.iAC} ${money(r.AC)} · ${L.iEV} ${money(r.EV)}</span></div>
         <div class="kpi"><span class="k">${L.kFinish}</span><span class="v">${r.p >= 1 ? dateTxt(r.R) : dateTxt(r.FF)}</span>${finishDelta > 0 && r.p < 1 ? `<span class="pill ${pillFor(r.SPIt)}">+${fmtInt(finishDelta)} ${L.days}</span>` : ''}<span class="s">${L.vsPlanned(dateTxt(r.F))}</span></div>
-        <div class="kpi"><span class="k">${L.kEac}</span><span class="v">${money(r.EAC)}</span>${r.VAC < -0.005 * r.BAC ? `<span class="pill ${pillFor(r.CPI)}">+${money(-r.VAC)}</span>` : ''}<span class="s">${L.vsBac(money(r.BAC))}</span></div>
+        <div class="kpi"><span class="k">${L.kEac}</span><span class="v">${money(r.EAC)}</span>${r.VAC < -0.005 * r.BAC ? `<span class="pill ${pillFor(r.CPI)}">+${money(-r.VAC)}</span>` : ''}<span class="s">${L.vsBac(money(r.BAC))}${ranged ? `<br>${L.eacRange(money(r.eacLo), money(r.eacHi))}` : ''}</span></div>
       </div>
+      ${profitCard(r, ranged)}
       <div class="card rate"><h3>${L.rateTitle}</h3>${rateBody}</div>
       <div class="two">
         <div class="card">
@@ -505,16 +733,148 @@ footer a:hover { text-decoration: underline; }
             <tr><td>${L.iVAC}<span class="abbr">VAC</span></td><td>${r.VAC < 0 ? '−' : ''}${money(Math.abs(r.VAC), true)}</td></tr>
           </tbody></table>
         </div>
-      </div>`;
+      </div>
+      <p class="disclaimer">${L.disclaimer}</p>`;
+    lastResult = r;
     // the chart and bars read --tone from the verdict; mirror it on the results box
     box.style.setProperty('--tone', `var(--${r.tone === 'good' ? 'good' : r.tone === 'warn' ? 'warn' : 'bad'})`);
 
+    $('btn-print').addEventListener('click', () => { buildReport(r); window.print(); });
+    $('btn-pdf').addEventListener('click', () => downloadPdf(r));
+    $('btn-xls').addEventListener('click', () => exportCsv(r));
     $('copy').addEventListener('click', () => {
       const done = () => { $('copied').hidden = false; setTimeout(() => { const c = $('copied'); if (c) c.hidden = true; }, 1800); };
       const fallback = () => { const s = window.getSelection(), rg = document.createRange(); rg.selectNodeContents(document.querySelector('.sentence')); s.removeAllRanges(); s.addRange(rg); };
       try { navigator.clipboard.writeText(lastSummary).then(done, fallback); } catch (e) { fallback(); }
     });
   }
+
+  const strip = (h) => String(h).replace(/<[^>]+>/g, '');
+  const fileBase = () => 'project-health-' + ($('status').value || iso(new Date()));
+
+  function rows(r) {
+    const L = T[lang];
+    const inputs = [
+      [L.proj.replace(/\s*\(.*\)$/, ''), r.proj || '—'],
+      [L.bac, money(r.BAC0, true)],
+      ...(r.CON !== r.BAC0 ? [[L.bac2, money(r.CON, true)]] : []),
+      [L.margin, fmt1(r.m * 100) + '%'],
+      [L.budget, money(r.BAC, true)],
+      [L.start, dateTxt(r.S)],
+      [L.finish, dateTxt(r.F0)],
+      ...(r.F - r.F0 ? [[L.finish2, dateTxt(r.F)]] : []),
+      [L.rDate, dateTxt(r.R)],
+      [L.progress, fmt1(r.p * 100) + '%'],
+      [L.ac, money(r.AC, true)],
+      [L.rPlanBasis, r.pvIn !== null ? L.basisReal(fmt1(r.pvIn * 100)) : L.basisAssumed(curve === 's' ? L.curveNameS : L.curveNameL).split('.')[0]],
+    ];
+    const results = [
+      [L.kSched, r.delay === 0 ? L.onTime : `${fmtInt(Math.abs(r.delay))} ${L.days} ${r.delay > 0 ? L.late : L.early}`],
+      [L.kCost, Math.abs(r.CV) < 0.005 * r.BAC ? L.onBudget : `${money(Math.abs(r.CV))} ${r.CV < 0 ? L.over : L.under}`],
+      [L.kFinish, r.p >= 1 ? dateTxt(r.R) : dateTxt(r.FF)],
+      [L.kEac, r.eacHi - r.eacLo > 0.01 * r.BAC ? L.eacRange(money(r.eacLo), money(r.eacHi)) : money(r.EAC)],
+      [L.pPlan, money(r.profitPlan)],
+      [r.profitHi < 0 ? L.pForeLoss : L.pFore, (r.eacHi - r.eacLo > 0.01 * r.BAC) ? `${(r.profitLo < 0 ? '−' : '') + money(Math.abs(r.profitLo))} … ${(r.profitHi < 0 ? '−' : '') + money(Math.abs(r.profitHi))}` : (r.profitMid < 0 ? '−' : '') + money(Math.abs(r.profitMid))],
+      [r.profitNow < 0 ? L.pNowLoss : L.pNow, (r.profitNow < 0 ? '−' : '') + money(Math.abs(r.profitNow))],
+      [L.rCurRate, fmt1(r.curRate) + '%'],
+      [L.rReq, r.reqRate != null && r.p < 1 ? fmt1(r.reqRate) + '%' : '—'],
+      [L.iSPI + ' SPI(t)', fmt2(r.SPIt)],
+      [L.iCPI + ' CPI', fmt2(r.CPI)],
+      [L.iTCPI + ' TCPI', isFinite(r.TCPI) ? fmt2(r.TCPI) : '—'],
+      [L.iPV + ' PV', money(r.PV, true)],
+      [L.iEV + ' EV', money(r.EV, true)],
+      [L.iAC + ' AC', money(r.AC, true)],
+      [L.iVAC + ' VAC', (r.VAC < 0 ? '−' : '') + money(Math.abs(r.VAC), true)],
+    ];
+    return { inputs, results };
+  }
+
+  function buildReport(r) {
+    const L = T[lang], el = $('report');
+    const { inputs, results } = rows(r);
+    const tbl = (list) => `<table><tbody>${list.map(([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`).join('')}</tbody></table>`;
+    const kp = [...results.slice(0, 4), results[5]];
+    el.innerHTML = `
+      <div class="report" data-tone="${r.tone}" dir="${lang === 'ar' ? 'rtl' : 'ltr'}">
+        <div class="r-head">
+          <div><h1>${L.rTitle}</h1>${r.proj ? `<div class="r-proj">${r.proj.replace(/[<>&]/g, '')}</div>` : ''}</div>
+          <div class="r-meta">${L.rDate}: <b>${dateTxt(r.R)}</b><br>${L.rIssued}: ${dateTxt(new Date(iso(new Date()) + 'T00:00:00Z'))}</div>
+        </div>
+        <div class="r-verdict"><span class="vlabel">${L.tone[r.tone]}</span><p>${document.querySelector('.sentence').innerHTML}</p></div>
+        <div class="r-kpis">${kp.map(([k, v]) => `<div><span>${k}</span><strong>${v}</strong></div>`).join('')}</div>
+        <div><h2>${L.chartTitle}</h2><div class="chart" dir="ltr">${chart(r)}</div></div>
+        <div class="r-two">
+          <div><h2>${L.rInputs}</h2>${tbl(inputs)}</div>
+          <div><h2>${L.rResults}</h2>${tbl(results.slice(4).filter((x, i) => i !== 1))}</div>
+        </div>
+        <p class="disclaimer">${L.disclaimer}</p>
+        <div class="r-foot"><span>${L.rPrepared}</span><span dir="ltr">ahmadali205.github.io/Eng_Ahmed</span></div>
+      </div>`;
+    return el;
+  }
+
+  // PDF libraries ship next to this page; cdnjs is the fallback
+  const LIBS = [
+    ['html2canvas', 'html2canvas.min.js', 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js'],
+    ['jspdf', 'jspdf.umd.min.js', 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'],
+  ];
+  const addScript = (src) => new Promise((ok, fail) => { const sc = document.createElement('script'); sc.src = src; sc.onload = ok; sc.onerror = fail; document.head.appendChild(sc); });
+  function loadPdfLib() {
+    return Promise.all(LIBS.map(([g, local, cdn]) => window[g] ? null : addScript(local).catch(() => addScript(cdn))));
+  }
+
+  async function downloadPdf(r) {
+    const L = T[lang], b = $('btn-pdf'), label = b.innerHTML;
+    b.disabled = true; b.textContent = L.working;
+    const el = buildReport(r);
+    const cover = document.createElement('div'); cover.className = 'cover'; cover.textContent = L.working;
+    document.body.appendChild(cover);
+    const rootDir = document.documentElement.dir, sx = window.scrollX, sy = window.scrollY;
+    document.documentElement.dir = 'ltr';   // the renderer measures from the left; the report keeps its own dir
+    window.scrollTo(0, 0);
+    el.classList.add('rendering');
+    try {
+      await loadPdfLib();
+      if (document.fonts && document.fonts.ready) await document.fonts.ready;
+      const node = el.firstElementChild;
+      const canvas = await window.html2canvas(node, { scale: 2, backgroundColor: '#ffffff', foreignObjectRendering: true, logging: false });
+      const pdf = new window.jspdf.jsPDF({ unit: 'pt', format: 'a4', orientation: 'portrait' });
+      const pw = pdf.internal.pageSize.getWidth(), ph = pdf.internal.pageSize.getHeight();
+      const h = canvas.height * pw / canvas.width;
+      const img = canvas.toDataURL('image/jpeg', 0.95);
+      if (h <= ph * 1.02) pdf.addImage(img, 'JPEG', 0, 0, pw, Math.min(h, ph));
+      else { let y = 0; while (y < h) { if (y) pdf.addPage(); pdf.addImage(img, 'JPEG', 0, -y, pw, h); y += ph; } }
+      pdf.save(fileBase() + '.pdf');
+    } catch (e) {
+      alertBox(L.pdfFail);
+    } finally {
+      el.classList.remove('rendering'); cover.remove();
+      document.documentElement.dir = rootDir;
+      window.scrollTo(sx, sy);
+      const nb = $('btn-pdf'); if (nb) { nb.disabled = false; nb.innerHTML = label; }
+    }
+  }
+
+  function alertBox(msg) {
+    const c = $('copied'); if (!c) return;
+    c.textContent = msg; c.style.color = 'var(--bad)'; c.hidden = false;
+    setTimeout(() => { c.hidden = true; c.style.color = ''; c.textContent = T[lang].copied; }, 6000);
+  }
+
+  function exportCsv(r) {
+    const L = T[lang];
+    const { inputs, results } = rows(r);
+    const q = (v) => '"' + strip(v).replace(/"/g, '""') + '"';
+    const lines = [[L.xField, L.xValue], ['', ''], [L.rInputs, ''], ...inputs, ['', ''], [L.rResults, ''], ...results, ['', ''], [L.tone[r.tone], strip(document.querySelector('.sentence').innerHTML)]];
+    const csv = '\ufeff' + lines.map((row) => row.map(q).join(',')).join('\r\n');
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+    a.download = fileBase() + '.csv';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  }
+
+  window.addEventListener('beforeprint', () => { if (lastResult && !lastResult.err) buildReport(lastResult); });
 
   function applyLang() {
     const L = T[lang];
@@ -540,13 +900,15 @@ footer a:hover { text-decoration: underline; }
     $('bac').value = '120,000,000';
     $('start').value = iso(start); $('finish').value = iso(finish); $('status').value = iso(today);
     $('pct').value = '58'; $('pctRange').value = 58;
-    $('ac').value = '66,500,000';
+    $('ac').value = '57,500,000';
+    $('margin').value = '15';
+    $('proj').value = ''; $('pv').value = ''; $('bac2').value = ''; $('finish2').value = '';
     render();
   }
 
   // events
-  ['bac', 'ac', 'start', 'finish', 'status', 'cur'].forEach((id) => $(id).addEventListener('input', render));
-  ['bac', 'ac'].forEach((id) => $(id).addEventListener('blur', () => withCommas($(id))));
+  ['bac', 'ac', 'start', 'finish', 'status', 'cur', 'proj', 'pv', 'bac2', 'finish2', 'margin'].forEach((id) => $(id).addEventListener('input', render));
+  ['bac', 'ac', 'bac2'].forEach((id) => $(id).addEventListener('blur', () => withCommas($(id))));
   $('pct').addEventListener('input', () => { const n = num($('pct').value); if (isFinite(n)) $('pctRange').value = n; render(); });
   $('pctRange').addEventListener('input', () => { $('pct').value = $('pctRange').value; render(); });
   $('form').addEventListener('submit', (e) => e.preventDefault());
