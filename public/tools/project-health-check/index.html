@@ -1,0 +1,570 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>فحص صحة المشروع | Project Health Check · Eng. Ahmed Ali</title>
+<meta name="description" content="Free Earned Value tool by Eng. Ahmed Ali: see if a project is late or over budget, its forecast finish date and final cost, and the monthly progress needed to finish on time.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font-size:14px}img{max-width:100%}[hidden]{display:none!important}</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Tajawal:wght@400;500;700&family=Source+Sans+3:wght@400;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: a site-report sheet. Inputs panel on one side, verdict + KPIs + S-curve on the other; stacks on phones. Navy/gold to match the portfolio. */
+:root {
+  --bg: #eef1f6;
+  --surface: #ffffff;
+  --surface-2: #f6f8fb;
+  --ink: #0f1f38;
+  --ink-2: #4a5a74;
+  --line: #d8dfe9;
+  --gold: #9d7a2e;
+  --gold-soft: #f3ead6;
+  --navy: #13284a;
+  --good: #1f7a4d; --good-bg: #e3f3ea;
+  --warn: #a8640a; --warn-bg: #fbf0dc;
+  --bad: #b3392b;  --bad-bg: #f9e4e1;
+  --plan: #7d8ca5;
+  --font-display: 'Archivo', 'DIN Next LT Arabic', 'Tajawal', system-ui, sans-serif;
+  --font-body: 'Source Sans 3', 'DIN Next LT Arabic', 'Tajawal', system-ui, sans-serif;
+  /* Arabic: DIN Next LT Arabic (Bold titles, Medium subtitles, Regular text); Tajawal stands in where DIN is not installed */
+  --font-ar: 'DIN Next LT Arabic', 'Tajawal', 'Source Sans 3', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0a1424; --surface: #111f37; --surface-2: #0d1a30; --ink: #e8eef7; --ink-2: #a3b2c8;
+    --line: #23365a; --gold: #d8b86e; --gold-soft: #2a2a24; --navy: #0d1a30;
+    --good: #5cc48f; --good-bg: #12302a; --warn: #e6b04f; --warn-bg: #33291a; --bad: #e0675a; --bad-bg: #3a1e22;
+    --plan: #8394b0; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0a1424; --surface: #111f37; --surface-2: #0d1a30; --ink: #e8eef7; --ink-2: #a3b2c8;
+  --line: #23365a; --gold: #d8b86e; --gold-soft: #2a2a24; --navy: #0d1a30;
+  --good: #5cc48f; --good-bg: #12302a; --warn: #e6b04f; --warn-bg: #33291a; --bad: #e0675a; --bad-bg: #3a1e22;
+  --plan: #8394b0; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.5; }
+html[lang="ar"] body { font-family: var(--font-ar); font-weight: 400; }
+html[lang="ar"] :is(input, select, button, .seg button, .ghost) { font-family: var(--font-ar); }
+html[lang="ar"] :is(.panel h2, .card h3, .kpi .k, .field label, .vlabel, .brand b, .lang button, .seg button, .eyebrow, footer a) { font-family: var(--font-ar); font-weight: 500; }
+html[lang="ar"] :is(h1, .kpi .v, .sentence b) { font-family: var(--font-ar); font-weight: 700; }
+.wrap { max-width: 1120px; margin: 0 auto; padding-block: 20px 40px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 20px; }
+
+/* header */
+.top { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.brand { display: flex; align-items: center; gap: 10px; color: var(--ink-2); font-size: 13px; text-decoration: none; }
+.brand b { color: var(--ink); font-weight: 600; }
+.mark { width: 30px; height: 30px; border-radius: 6px; background: var(--navy); color: #d8b86e; display: grid; place-items: center; font-family: var(--font-display); font-weight: 800; font-size: 13px; border: 1px solid var(--line); }
+.lang { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 3px; background: var(--surface); }
+.lang button { border: 0; background: transparent; color: var(--ink-2); font: 600 14px var(--font-body); padding: 7px 16px; border-radius: 999px; cursor: pointer; }
+.lang button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+.hero { display: grid; gap: 6px; }
+.eyebrow { font: 500 12px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--gold); }
+html[lang="ar"] .eyebrow { letter-spacing: 0; font-size: 13px; }
+h1 { font-family: var(--font-display); font-size: clamp(26px, 4.4vw, 40px); line-height: 1.12; margin: 0; text-wrap: balance; font-weight: 800; letter-spacing: -.01em; }
+html[lang="ar"] h1 { letter-spacing: 0; line-height: 1.3; }
+.lede { margin: 0; color: var(--ink-2); max-width: 62ch; font-size: 16px; }
+
+/* main grid */
+.main { display: grid; grid-template-columns: minmax(0, 340px) minmax(0, 1fr); gap: 20px; align-items: start; }
+@media (max-width: 860px) { .main { grid-template-columns: minmax(0, 1fr); } }
+
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px; display: grid; gap: 14px; }
+.panel h2 { margin: 0; font-size: 15px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.ghost { border: 1px solid var(--line); background: var(--surface-2); color: var(--ink-2); font: 600 12px inherit; font-family: inherit; padding: 4px 10px; border-radius: 6px; cursor: pointer; }
+.ghost:hover { color: var(--ink); border-color: var(--gold); }
+.field { display: grid; gap: 5px; }
+.field label { font-size: 13px; font-weight: 600; color: var(--ink-2); }
+.field .hint { font-size: 12px; color: var(--ink-2); opacity: .85; }
+input, select { width: 100%; min-width: 0; font: 500 15px var(--font-mono); color: var(--ink); background: var(--surface-2); border: 1px solid var(--line); border-radius: 7px; padding: 9px 10px; }
+select { font-family: inherit; }
+.row2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; }
+.money { display: grid; grid-template-columns: minmax(0, 1fr) 92px; gap: 8px; }
+.pct { display: grid; grid-template-columns: minmax(0, 1fr) 76px; gap: 10px; align-items: center; }
+input[type="range"] { padding: 0; accent-color: var(--gold); background: transparent; border: 0; }
+.seg { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid var(--line); border-radius: 7px; overflow: hidden; }
+.seg button { border: 0; background: var(--surface-2); color: var(--ink-2); padding: 8px; font: 600 13px inherit; font-family: inherit; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--gold-soft); color: var(--ink); box-shadow: inset 0 -2px 0 var(--gold); }
+.divider { height: 1px; background: var(--line); }
+
+/* results */
+.results { display: grid; gap: 16px; min-width: 0; }
+.verdict { border-radius: 10px; padding: 18px 20px; display: grid; gap: 10px; border: 1px solid var(--line); background: var(--surface); position: relative; overflow: hidden; }
+.verdict::before { content: ""; position: absolute; inset-block: 0; inset-inline-start: 0; width: 6px; background: var(--tone, var(--plan)); }
+.verdict[data-tone="good"] { --tone: var(--good); --tone-bg: var(--good-bg); }
+.verdict[data-tone="warn"] { --tone: var(--warn); --tone-bg: var(--warn-bg); }
+.verdict[data-tone="bad"]  { --tone: var(--bad);  --tone-bg: var(--bad-bg); }
+.vhead { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.light { display: inline-flex; gap: 5px; padding: 5px 7px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--line); }
+.light i { width: 12px; height: 12px; border-radius: 50%; background: var(--line); }
+.verdict[data-tone="good"] .light i:nth-child(3), .verdict[data-tone="warn"] .light i:nth-child(2), .verdict[data-tone="bad"] .light i:nth-child(1) { background: var(--tone); box-shadow: 0 0 0 3px var(--tone-bg); }
+.vlabel { font-family: var(--font-display); font-weight: 800; font-size: 20px; color: var(--tone); }
+html[lang="ar"] .vlabel { font-size: 21px; }
+.sentence { margin: 0; font-size: 17px; line-height: 1.65; max-width: 70ch; }
+.sentence b { color: var(--tone); font-weight: 700; }
+.vfoot { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.copied { font-size: 12px; color: var(--good); }
+
+.kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 1000px) { .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.kpi { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px; display: grid; gap: 4px; align-content: start; min-width: 0; }
+.kpi .k { font-size: 12.5px; color: var(--ink-2); font-weight: 600; }
+.kpi .v { font: 700 21px var(--font-display); font-variant-numeric: tabular-nums; line-height: 1.15; overflow-wrap: anywhere; }
+.kpi .s { font-size: 12.5px; color: var(--ink-2); }
+.pill { display: inline-block; font-size: 11.5px; font-weight: 700; padding: 2px 8px; border-radius: 999px; justify-self: start; }
+.pill.good { color: var(--good); background: var(--good-bg); }
+.pill.warn { color: var(--warn); background: var(--warn-bg); }
+.pill.bad { color: var(--bad); background: var(--bad-bg); }
+
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; display: grid; gap: 12px; min-width: 0; }
+.card h3 { margin: 0; font-size: 14px; font-weight: 700; }
+.rate { display: grid; gap: 10px; }
+.bar { display: grid; grid-template-columns: 110px minmax(0, 1fr) 64px; gap: 10px; align-items: center; font-size: 13px; }
+.bar .track { height: 12px; border-radius: 6px; background: var(--surface-2); border: 1px solid var(--line); overflow: hidden; }
+.bar .fill { height: 100%; border-radius: 6px; transition: width .4s ease; }
+.bar .num { font: 600 14px var(--font-mono); text-align: end; }
+.note { font-size: 13px; color: var(--ink-2); margin: 0; }
+
+.chart { overflow-x: auto; }
+.chart svg { display: block; width: 100%; height: auto; }
+.legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: 12.5px; color: var(--ink-2); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend i { width: 18px; height: 0; border-top: 2px solid; display: inline-block; }
+
+.nw { white-space: nowrap; }
+.idx { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.idx td { padding: 7px 0; border-bottom: 1px solid var(--line); }
+.idx tr:last-child td { border-bottom: 0; }
+.idx td:last-child { text-align: end; font: 600 13.5px var(--font-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.idx .abbr { font: 500 11.5px var(--font-mono); color: var(--gold); margin-inline-start: 6px; }
+.two { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
+
+.error { border: 1px solid var(--bad); background: var(--bad-bg); color: var(--ink); border-radius: 10px; padding: 14px 16px; font-size: 14px; }
+
+footer { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-size: 13px; color: var(--ink-2); border-top: 1px solid var(--line); padding-top: 16px; }
+footer a { color: var(--gold); font-weight: 600; text-decoration: none; }
+footer a:hover { text-decoration: underline; }
+.method { max-width: 70ch; }
+
+@media (prefers-reduced-motion: reduce) { .bar .fill { transition: none; } }
+@media (max-width: 480px) { .bar { grid-template-columns: 84px minmax(0, 1fr) 56px; } .kpi .v { font-size: 20px; } }
+</style>
+
+</head>
+<body>
+<div class="wrap" id="app">
+  <header class="top">
+    <a class="brand" href="../../">
+      <span class="mark">AA</span>
+      <span data-i18n="byline"></span>
+    </a>
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" id="btn-ar" data-lang="ar" aria-pressed="true">عربي</button>
+      <button type="button" id="btn-en" data-lang="en" aria-pressed="false">English</button>
+    </div>
+  </header>
+
+  <section class="hero">
+    <span class="eyebrow" data-i18n="eyebrow"></span>
+    <h1 data-i18n="title"></h1>
+    <p class="lede" data-i18n="lede"></p>
+  </section>
+
+  <div class="main">
+    <form class="panel" id="form" autocomplete="off">
+      <h2><span data-i18n="inputs"></span><button type="button" class="ghost" id="sample" data-i18n="sample"></button></h2>
+
+      <div class="field">
+        <label for="bac" data-i18n="bac"></label>
+        <div class="money">
+          <input id="bac" inputmode="decimal" dir="ltr">
+          <select id="cur" aria-label="Currency">
+            <option value="SAR">SAR</option><option value="EGP">EGP</option><option value="AED">AED</option><option value="USD">USD</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row2">
+        <div class="field"><label for="start" data-i18n="start"></label><input type="date" id="start" dir="ltr"></div>
+        <div class="field"><label for="finish" data-i18n="finish"></label><input type="date" id="finish" dir="ltr"></div>
+      </div>
+
+      <div class="field">
+        <label for="pct" data-i18n="progress"></label>
+        <div class="pct">
+          <input type="range" id="pctRange" min="0" max="100" step="0.5" aria-label="%">
+          <input id="pct" inputmode="decimal" dir="ltr">
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="ac" data-i18n="ac"></label>
+        <input id="ac" inputmode="decimal" dir="ltr">
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="field">
+        <label for="status" data-i18n="status"></label>
+        <input type="date" id="status" dir="ltr">
+        <span class="hint" data-i18n="statusHint"></span>
+      </div>
+
+      <div class="field">
+        <label data-i18n="curve"></label>
+        <div class="seg" role="group">
+          <button type="button" id="curve-s" data-curve="s" aria-pressed="true" data-i18n="curveS"></button>
+          <button type="button" id="curve-l" data-curve="linear" aria-pressed="false" data-i18n="curveL"></button>
+        </div>
+        <span class="hint" data-i18n="curveHint"></span>
+      </div>
+    </form>
+
+    <section class="results" id="results" aria-live="polite"></section>
+  </div>
+
+  <footer>
+    <p class="method" data-i18n="method"></p>
+    <span><a href="../../" data-i18n="name"></a></span>
+  </footer>
+</div>
+
+<script>
+(function () {
+  const T = {
+    ar: {
+      byline: '<b>م. أحمد علي</b> · تخطيط وتحكم المشاريع',
+      eyebrow: 'أداة مجانية · Earned Value',
+      title: 'فحص صحة المشروع',
+      lede: 'أدخل خمسة أرقام من آخر تقرير، واعرف في ثوانٍ هل مشروعك متأخر أو فوق الميزانية، ومتى سينتهي فعليًا، وكم سيكلف.',
+      inputs: 'بيانات المشروع', sample: 'مثال',
+      bac: 'قيمة العقد', start: 'تاريخ البداية', finish: 'تاريخ النهاية المخطط',
+      progress: 'نسبة الإنجاز الفعلية %', ac: 'المصروف حتى اليوم',
+      status: 'تاريخ التقرير', statusHint: 'اليوم افتراضيًا. غيّره لو تحسب لتاريخ تقرير سابق.',
+      curve: 'شكل الخطة', curveS: 'منحنى S', curveL: 'خطي',
+      curveHint: 'معظم المشاريع تتبع منحنى S: بطء في البداية والنهاية، وذروة في المنتصف.',
+      method: 'الحساب بطريقة القيمة المكتسبة (EVM) والجدول المكتسب (Earned Schedule). القيمة المخططة مأخوذة من شكل الخطة المختار، والتوقعات تفترض استمرار نفس الأداء.',
+      madeBy: 'من تطوير', name: 'م. أحمد علي',
+      tone: { good: 'المشروع بحالة جيدة', warn: 'يحتاج متابعة', bad: 'في خطر' },
+      copy: 'نسخ الملخص للتقرير', copied: 'تم النسخ',
+      kSched: 'الموقف الزمني', kCost: 'الموقف المالي', kFinish: 'التاريخ المتوقع للتسليم', kEac: 'التكلفة المتوقعة في النهاية',
+      late: 'متأخر', early: 'متقدم', onTime: 'على الخطة', days: 'يوم',
+      over: 'فوق الميزانية', under: 'تحت الميزانية', onBudget: 'على الميزانية',
+      vsPlanned: (d) => `مقابل ${d} المخطط`, vsBac: (d) => `مقابل ${d} قيمة العقد`,
+      planned: 'مخطط اليوم', earned: 'قيمة المنفذ',
+      rateTitle: 'الإنجاز الشهري المطلوب للتسليم في الموعد',
+      rateNow: 'المعدل الحالي', rateReq: 'المطلوب',
+      rateNote: (m) => `باقي ${m} شهر على موعد التسليم المخطط.`,
+      ratePassed: 'موعد التسليم المخطط قد مضى. المطلوب الآن هو خطة تعافٍ وتاريخ تسليم جديد معتمد.',
+      rateDone: 'المشروع مكتمل.',
+      chartTitle: 'منحنى الإنجاز', lgPlan: 'الخطة', lgActual: 'الفعلي', lgFore: 'التوقع بنفس المعدل',
+      today: 'اليوم', plannedEnd: 'النهاية المخططة',
+      idxTitle: 'المؤشرات للمختصين',
+      iSPI: 'مؤشر أداء الجدول', iCPI: 'مؤشر أداء التكلفة', iTCPI: 'الكفاءة المطلوبة للباقي',
+      iPV: 'القيمة المخططة', iEV: 'القيمة المكتسبة', iAC: 'التكلفة الفعلية', iVAC: 'الفرق المتوقع عند الانتهاء',
+      errDates: 'تاريخ النهاية لازم يكون بعد تاريخ البداية.',
+      errStatus: 'تاريخ التقرير لازم يكون بعد تاريخ البداية.',
+      errBac: 'أدخل قيمة العقد (رقم أكبر من صفر).',
+      errPct: 'نسبة الإنجاز بين 0 و 100.',
+      errAc: 'أدخل المصروف حتى اليوم (أكبر من صفر) عشان نحسب الأداء المالي.',
+      errZero: 'نسبة الإنجاز صفر، فلا يمكن حساب التوقعات بعد.',
+      sSched: (d) => d > 0 ? `المشروع <b>متأخر ${d} يوم</b> عن الخطة` : d < 0 ? `المشروع <b>متقدم ${-d} يوم</b> عن الخطة` : `المشروع <b>على الخطة زمنيًا</b>`,
+      sCost: (v, over) => v === 0 ? `، والصرف <b>مطابق للميزانية</b>.` : over ? `، و<b>فوق الميزانية بـ ${v}</b>.` : `، و<b>تحت الميزانية بـ ${v}</b>.`,
+      sFore: (date, eac) => ` لو استمر بنفس الأداء سينتهي في <b>${date}</b> بتكلفة نهائية حوالي <b>${eac}</b>.`,
+      sReq: (cur, req) => ` للتسليم في الموعد يحتاج رفع الإنجاز من ${cur}% إلى <b>${req}% شهريًا</b>.`,
+      sPassed: ' موعد التسليم المخطط مضى، والمطلوب خطة تعافٍ معتمدة.',
+      million: 'مليون', thousand: 'ألف', billion: 'مليار',
+      cur: { SAR: 'ر.س', EGP: 'ج.م', AED: 'د.إ', USD: '$' },
+      month: 'شهر'
+    },
+    en: {
+      byline: '<b>Eng. Ahmed Ali</b> · Planning &amp; Project Controls',
+      eyebrow: 'Free tool · Earned Value',
+      title: 'Project Health Check',
+      lede: 'Enter five numbers from your latest report and see in seconds whether the project is late or over budget, when it will really finish, and what it will cost.',
+      inputs: 'Project data', sample: 'Example',
+      bac: 'Contract value', start: 'Start date', finish: 'Planned finish',
+      progress: 'Actual progress %', ac: 'Cost spent to date',
+      status: 'Report date', statusHint: 'Today by default. Change it to check an earlier report.',
+      curve: 'Plan shape', curveS: 'S-curve', curveL: 'Linear',
+      curveHint: 'Most projects follow an S-curve: slow start and finish, peak in the middle.',
+      method: 'Calculated with Earned Value Management (EVM) and Earned Schedule. Planned value comes from the selected plan shape; forecasts assume current performance continues.',
+      madeBy: 'Built by', name: 'Eng. Ahmed Ali',
+      tone: { good: 'Healthy', warn: 'Needs attention', bad: 'At risk' },
+      copy: 'Copy summary for report', copied: 'Copied',
+      kSched: 'Schedule', kCost: 'Cost', kFinish: 'Forecast finish', kEac: 'Forecast final cost',
+      late: 'late', early: 'ahead', onTime: 'On plan', days: 'days',
+      over: 'over budget', under: 'under budget', onBudget: 'On budget',
+      vsPlanned: (d) => `vs planned ${d}`, vsBac: (d) => `vs contract ${d}`,
+      planned: 'Planned today', earned: 'Work done',
+      rateTitle: 'Monthly progress needed to finish on time',
+      rateNow: 'Current rate', rateReq: 'Required',
+      rateNote: (m) => `${m} months left to the planned finish.`,
+      ratePassed: 'The planned finish has passed. What is needed now is a recovery plan and an approved new finish date.',
+      rateDone: 'The project is complete.',
+      chartTitle: 'Progress curve', lgPlan: 'Plan', lgActual: 'Actual', lgFore: 'Forecast at current rate',
+      today: 'Today', plannedEnd: 'Planned finish',
+      idxTitle: 'Indices for specialists',
+      iSPI: 'Schedule performance', iCPI: 'Cost performance', iTCPI: 'Efficiency needed on the rest',
+      iPV: 'Planned value', iEV: 'Earned value', iAC: 'Actual cost', iVAC: 'Variance at completion',
+      errDates: 'The planned finish must be after the start date.',
+      errStatus: 'The report date must be after the start date.',
+      errBac: 'Enter the contract value (a number above zero).',
+      errPct: 'Progress must be between 0 and 100.',
+      errAc: 'Enter the cost spent to date (above zero) to assess cost performance.',
+      errZero: 'Progress is zero, so there is nothing to forecast yet.',
+      sSched: (d) => d > 0 ? `The project is <b>${d} days behind</b> plan` : d < 0 ? `The project is <b>${-d} days ahead</b> of plan` : `The project is <b>on schedule</b>`,
+      sCost: (v, over) => v === 0 ? ` and <b>on budget</b>.` : over ? ` and <b>${v} over budget</b>.` : ` and <b>${v} under budget</b>.`,
+      sFore: (date, eac) => ` At the current performance it will finish on <b>${date}</b> at a final cost of about <b>${eac}</b>.`,
+      sReq: (cur, req) => ` To finish on time, monthly progress must rise from ${cur}% to <b>${req}%</b>.`,
+      sPassed: ' The planned finish has passed; an approved recovery plan is needed.',
+      million: 'M', thousand: 'K', billion: 'B',
+      cur: { SAR: 'SAR', EGP: 'EGP', AED: 'AED', USD: '$' },
+      month: 'mo'
+    }
+  };
+
+  const DAY = 86400000, MONTH = 30.4375;
+  const $ = (id) => document.getElementById(id);
+  let lang = 'ar', curve = 's', lastSummary = '';
+
+  function store(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  function load(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+
+  const iso = (d) => new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+  const parseDate = (s) => s ? new Date(s + 'T00:00:00Z') : null;
+  const num = (s) => { const n = parseFloat(String(s).replace(/[,\s٬]/g, '').replace(/[٠-٩]/g, (c) => '٠١٢٣٤٥٦٧٨٩'.indexOf(c))); return isFinite(n) ? n : NaN; };
+  const fmtInt = (n) => Math.round(n).toLocaleString('en-US');
+  const fmt1 = (n) => (Math.round(n * 10) / 10).toLocaleString('en-US', { maximumFractionDigits: 1 });
+  const fmt2 = (n) => n.toFixed(2);
+
+  function money(n, full) {
+    const L = T[lang], c = L.cur[$('cur').value];
+    const a = Math.abs(n);
+    let s;
+    if (full || a < 1e4) s = fmtInt(a);
+    else if (a >= 1e9) s = fmt2(a / 1e9) + (lang === 'ar' ? ' ' : '') + L.billion;
+    else if (a >= 1e6) s = fmt1(a / 1e6) + (lang === 'ar' ? ' ' : '') + L.million;
+    else s = fmt1(a / 1e3) + (lang === 'ar' ? ' ' : '') + L.thousand;
+    return lang === 'ar' ? `<span class="nw">${s} ${c}</span>` : (c === '$' ? `$${s}` : `<span class="nw">${s} ${c}</span>`);
+  }
+  function dateTxt(d) {
+    return new Intl.DateTimeFormat(lang === 'ar' ? 'ar-EG-u-nu-latn' : 'en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }).format(d);
+  }
+  function shortDate(d) {
+    return new Intl.DateTimeFormat(lang === 'ar' ? 'ar-EG-u-nu-latn' : 'en-GB', { month: 'short', year: 'numeric', timeZone: 'UTC' }).format(d);
+  }
+
+  // planned fraction for elapsed share x of duration
+  const plan = (x) => { x = Math.min(1, Math.max(0, x)); return curve === 's' ? x * x * (3 - 2 * x) : x; };
+  function planInv(p) {
+    if (curve !== 's') return p;
+    let lo = 0, hi = 1;
+    for (let i = 0; i < 50; i++) { const m = (lo + hi) / 2; if (plan(m) < p) lo = m; else hi = m; }
+    return (lo + hi) / 2;
+  }
+
+  function compute() {
+    const L = T[lang];
+    const BAC = num($('bac').value), AC = num($('ac').value), p = num($('pct').value) / 100;
+    const S = parseDate($('start').value), F = parseDate($('finish').value), R = parseDate($('status').value);
+    if (!(BAC > 0)) return { err: L.errBac };
+    if (!S || !F || F <= S) return { err: L.errDates };
+    if (!R || R <= S) return { err: L.errStatus };
+    if (!(p >= 0 && p <= 1)) return { err: L.errPct };
+    if (!(AC > 0)) return { err: L.errAc };
+    if (p === 0) return { err: L.errZero };
+
+    const D = (F - S) / DAY, t = (R - S) / DAY;
+    const pvPct = plan(t / D), PV = pvPct * BAC, EV = p * BAC;
+    const ES = planInv(p) * D;                 // earned schedule, days
+    const delay = Math.round(t - ES);          // + = behind
+    const SPIt = ES / t, SPI = PV > 0 ? EV / PV : 1, CPI = EV / AC;
+    const IEAC = D / SPIt;                      // forecast duration
+    const FF = new Date(S.getTime() + Math.round(IEAC) * DAY);
+    const EAC = BAC / CPI, VAC = BAC - EAC, CV = EV - AC;
+    const TCPI = BAC - AC > 0 ? (BAC - EV) / (BAC - AC) : Infinity;
+    const monthsLeft = (F - R) / DAY / MONTH;
+    const curRate = p * 100 / (t / MONTH);
+    const reqRate = monthsLeft > 0.25 ? (1 - p) * 100 / monthsLeft : null;
+
+    const score = Math.min(SPIt, CPI);
+    const tone = p >= 1 && CPI >= 0.95 ? 'good' : score >= 0.95 ? 'good' : score >= 0.85 ? 'warn' : 'bad';
+    return { BAC, AC, p, S, F, R, D, t, PV, EV, pvPct, ES, delay, SPIt, SPI, CPI, IEAC, FF, EAC, VAC, CV, TCPI, monthsLeft, curRate, reqRate, tone };
+  }
+
+  const pillFor = (v) => v >= 0.95 ? 'good' : v >= 0.85 ? 'warn' : 'bad';
+
+  function chart(r) {
+    const L = T[lang];
+    const W = 640, H = 250, l = 44, rt = 16, tp = 16, b = 34;
+    const maxX = Math.max(r.D, Math.min(r.IEAC, r.D * 2.5), r.t) * 1.04;
+    const X = (d) => l + (d / maxX) * (W - l - rt);
+    const Y = (v) => tp + (1 - v) * (H - tp - b);
+    let planPath = '';
+    for (let i = 0; i <= 80; i++) { const d = r.D * i / 80; planPath += (i ? 'L' : 'M') + X(d).toFixed(1) + ' ' + Y(plan(d / r.D)).toFixed(1); }
+    // actual progress drawn on the same S shape, compressed to reach p at t
+    let actPath = '';
+    const e = planInv(r.p);
+    for (let i = 0; i <= 40; i++) { const f = i / 40; actPath += (i ? 'L' : 'M') + X(r.t * f).toFixed(1) + ' ' + Y(plan(e * f)).toFixed(1); }
+    let forePath = '';
+    if (r.p < 1) {
+      const end = Math.min(r.IEAC, maxX);
+      for (let i = 0; i <= 40; i++) {
+        const d = r.t + (end - r.t) * i / 40;
+        const sh = Math.min(1, e + (1 - e) * ((d - r.t) / (r.IEAC - r.t)));
+        forePath += (i ? 'L' : 'M') + X(d).toFixed(1) + ' ' + Y(plan(sh)).toFixed(1);
+      }
+    }
+    let grid = '';
+    [0, .25, .5, .75, 1].forEach((v) => {
+      grid += `<line x1="${l}" x2="${W - rt}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--line)" stroke-width="1"/>`;
+      grid += `<text x="${l - 8}" y="${Y(v) + 4}" text-anchor="end" font-size="11" fill="var(--ink-2)" font-family="IBM Plex Mono, monospace">${v * 100}%</text>`;
+    });
+    // year-ish ticks: start, planned finish, forecast finish
+    const tick = (d, label, anchor) => `<text x="${X(d)}" y="${H - 12}" text-anchor="${anchor}" font-size="11" fill="var(--ink-2)">${label}</text>`;
+    const fx = X(r.D), tx = X(r.t);
+    const nearFinish = Math.abs(fx - tx) < 70;
+    return `
+<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${L.chartTitle}">
+  ${grid}
+  <line x1="${fx}" x2="${fx}" y1="${tp}" y2="${H - b}" stroke="var(--plan)" stroke-dasharray="2 4"/>
+  <line x1="${tx}" x2="${tx}" y1="${tp}" y2="${H - b}" stroke="var(--gold)" stroke-width="1.5"/>
+  <path d="${planPath}" fill="none" stroke="var(--plan)" stroke-width="2"/>
+  ${forePath ? `<path d="${forePath}" fill="none" stroke="var(--tone)" stroke-width="2" stroke-dasharray="6 5"/>` : ''}
+  <path d="${actPath}" fill="none" stroke="var(--ink)" stroke-width="2.5"/>
+  <circle cx="${X(r.t)}" cy="${Y(r.pvPct)}" r="4" fill="var(--surface)" stroke="var(--plan)" stroke-width="2"/>
+  <circle cx="${X(r.t)}" cy="${Y(r.p)}" r="5" fill="var(--ink)"/>
+  <text x="${tx + 6}" y="${tp + 12}" font-size="11" font-weight="600" fill="var(--gold)">${L.today}</text>
+  ${tick(0, shortDate(r.S), 'start')}
+  ${nearFinish ? '' : tick(r.D, shortDate(r.F), 'middle')}
+  ${r.p < 1 && r.IEAC <= maxX && X(r.IEAC) - fx > 70 ? tick(r.IEAC, shortDate(r.FF), 'end') : ''}
+</svg>`;
+  }
+
+  function render() {
+    const L = T[lang], box = $('results');
+    const r = compute();
+    if (r.err) { box.innerHTML = `<div class="error">${r.err}</div>`; lastSummary = ''; return; }
+
+    const cvTxt = money(Math.abs(r.CV));
+    const over = r.CV < 0;
+    let sentence = L.sSched(r.delay) + L.sCost(Math.abs(r.CV) < 0.005 * r.BAC ? 0 : cvTxt, over);
+    if (r.p < 1) sentence += L.sFore(dateTxt(r.FF), money(r.EAC));
+    if (r.p < 1) sentence += r.reqRate != null ? L.sReq(fmt1(r.curRate), fmt1(r.reqRate)) : L.sPassed;
+    lastSummary = sentence.replace(/<[^>]+>/g, '');
+
+    const schedV = r.delay === 0 ? L.onTime : `${fmtInt(Math.abs(r.delay))} ${L.days}`;
+    const schedS = r.delay === 0 ? '' : (r.delay > 0 ? L.late : L.early);
+    const costTiny = Math.abs(r.CV) < 0.005 * r.BAC;
+    const costV = costTiny ? L.onBudget : money(Math.abs(r.CV));
+    const costS = costTiny ? '' : (over ? L.over : L.under);
+    const finishDelta = Math.round((r.FF - r.F) / DAY);
+
+    const reqW = r.reqRate != null ? r.reqRate : 0;
+    const scale = Math.max(r.curRate, reqW, 1) * 1.1;
+    const rateBody = r.p >= 1 ? `<p class="note">${L.rateDone}</p>` : r.reqRate == null ? `<p class="note">${L.ratePassed}</p>` : `
+      <div class="bar"><span>${L.rateNow}</span><div class="track"><div class="fill" style="width:${(r.curRate / scale * 100).toFixed(1)}%;background:var(--plan)"></div></div><span class="num">${fmt1(r.curRate)}%</span></div>
+      <div class="bar"><span>${L.rateReq}</span><div class="track"><div class="fill" style="width:${(r.reqRate / scale * 100).toFixed(1)}%;background:var(--tone)"></div></div><span class="num">${fmt1(r.reqRate)}%</span></div>
+      <p class="note">${L.rateNote(fmt1(r.monthsLeft))}</p>`;
+
+    box.innerHTML = `
+      <div class="verdict" data-tone="${r.tone}" id="verdict">
+        <div class="vhead"><span class="light" aria-hidden="true"><i></i><i></i><i></i></span><span class="vlabel">${L.tone[r.tone]}</span></div>
+        <p class="sentence">${sentence}</p>
+        <div class="vfoot"><button type="button" class="ghost" id="copy">${L.copy}</button><span class="copied" id="copied" hidden>${L.copied}</span></div>
+      </div>
+      <div class="kpis">
+        <div class="kpi"><span class="k">${L.kSched}</span><span class="v">${schedV}</span>${schedS ? `<span class="pill ${pillFor(r.SPIt)}">${schedS}</span>` : ''}<span class="s">${L.planned} ${fmt1(r.pvPct * 100)}% · ${L.earned} ${fmt1(r.p * 100)}%</span></div>
+        <div class="kpi"><span class="k">${L.kCost}</span><span class="v">${costV}</span>${costS ? `<span class="pill ${pillFor(r.CPI)}">${costS}</span>` : ''}<span class="s">${L.iAC} ${money(r.AC)} · ${L.iEV} ${money(r.EV)}</span></div>
+        <div class="kpi"><span class="k">${L.kFinish}</span><span class="v">${r.p >= 1 ? dateTxt(r.R) : dateTxt(r.FF)}</span>${finishDelta > 0 && r.p < 1 ? `<span class="pill ${pillFor(r.SPIt)}">+${fmtInt(finishDelta)} ${L.days}</span>` : ''}<span class="s">${L.vsPlanned(dateTxt(r.F))}</span></div>
+        <div class="kpi"><span class="k">${L.kEac}</span><span class="v">${money(r.EAC)}</span>${r.VAC < -0.005 * r.BAC ? `<span class="pill ${pillFor(r.CPI)}">+${money(-r.VAC)}</span>` : ''}<span class="s">${L.vsBac(money(r.BAC))}</span></div>
+      </div>
+      <div class="card rate"><h3>${L.rateTitle}</h3>${rateBody}</div>
+      <div class="two">
+        <div class="card">
+          <h3>${L.chartTitle}</h3>
+          <div class="chart" dir="ltr">${chart(r)}</div>
+          <div class="legend"><span><i style="border-color:var(--plan)"></i>${L.lgPlan}</span><span><i style="border-color:var(--ink);border-top-width:3px"></i>${L.lgActual}</span>${r.p < 1 ? `<span><i style="border-color:var(--tone);border-top-style:dashed"></i>${L.lgFore}</span>` : ''}</div>
+        </div>
+        <div class="card">
+          <h3>${L.idxTitle}</h3>
+          <table class="idx"><tbody>
+            <tr><td>${L.iSPI}<span class="abbr">SPI(t)</span></td><td>${fmt2(r.SPIt)}</td></tr>
+            <tr><td>${L.iCPI}<span class="abbr">CPI</span></td><td>${fmt2(r.CPI)}</td></tr>
+            <tr><td>${L.iTCPI}<span class="abbr">TCPI</span></td><td>${isFinite(r.TCPI) ? fmt2(r.TCPI) : '—'}</td></tr>
+            <tr><td>${L.iPV}<span class="abbr">PV</span></td><td>${money(r.PV, true)}</td></tr>
+            <tr><td>${L.iEV}<span class="abbr">EV</span></td><td>${money(r.EV, true)}</td></tr>
+            <tr><td>${L.iAC}<span class="abbr">AC</span></td><td>${money(r.AC, true)}</td></tr>
+            <tr><td>${L.iVAC}<span class="abbr">VAC</span></td><td>${r.VAC < 0 ? '−' : ''}${money(Math.abs(r.VAC), true)}</td></tr>
+          </tbody></table>
+        </div>
+      </div>`;
+    // the chart and bars read --tone from the verdict; mirror it on the results box
+    box.style.setProperty('--tone', `var(--${r.tone === 'good' ? 'good' : r.tone === 'warn' ? 'warn' : 'bad'})`);
+
+    $('copy').addEventListener('click', () => {
+      const done = () => { $('copied').hidden = false; setTimeout(() => { const c = $('copied'); if (c) c.hidden = true; }, 1800); };
+      const fallback = () => { const s = window.getSelection(), rg = document.createRange(); rg.selectNodeContents(document.querySelector('.sentence')); s.removeAllRanges(); s.addRange(rg); };
+      try { navigator.clipboard.writeText(lastSummary).then(done, fallback); } catch (e) { fallback(); }
+    });
+  }
+
+  function applyLang() {
+    const L = T[lang];
+    document.documentElement.lang = lang;
+    document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+    document.querySelectorAll('[data-i18n]').forEach((el) => { el.innerHTML = L[el.dataset.i18n]; });
+    $('btn-ar').setAttribute('aria-pressed', lang === 'ar');
+    $('btn-en').setAttribute('aria-pressed', lang === 'en');
+    document.title = lang === 'ar' ? 'فحص صحة المشروع' : 'Project Health Check';
+    render();
+  }
+
+  function withCommas(el) {
+    const n = num(el.value);
+    if (isFinite(n) && el !== document.activeElement) el.value = n.toLocaleString('en-US', { maximumFractionDigits: 2 });
+  }
+
+  function loadSample() {
+    // example project, not real data
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const start = new Date(today); start.setMonth(start.getMonth() - 17); start.setDate(1);
+    const finish = new Date(start); finish.setMonth(finish.getMonth() + 24); finish.setDate(finish.getDate() - 1);
+    $('bac').value = '120,000,000';
+    $('start').value = iso(start); $('finish').value = iso(finish); $('status').value = iso(today);
+    $('pct').value = '58'; $('pctRange').value = 58;
+    $('ac').value = '66,500,000';
+    render();
+  }
+
+  // events
+  ['bac', 'ac', 'start', 'finish', 'status', 'cur'].forEach((id) => $(id).addEventListener('input', render));
+  ['bac', 'ac'].forEach((id) => $(id).addEventListener('blur', () => withCommas($(id))));
+  $('pct').addEventListener('input', () => { const n = num($('pct').value); if (isFinite(n)) $('pctRange').value = n; render(); });
+  $('pctRange').addEventListener('input', () => { $('pct').value = $('pctRange').value; render(); });
+  $('form').addEventListener('submit', (e) => e.preventDefault());
+  $('sample').addEventListener('click', loadSample);
+  document.querySelectorAll('.lang button').forEach((b) => b.addEventListener('click', () => { lang = b.dataset.lang; store('phc-lang', lang); applyLang(); }));
+  document.querySelectorAll('.seg button').forEach((b) => b.addEventListener('click', () => {
+    curve = b.dataset.curve;
+    document.querySelectorAll('.seg button').forEach((x) => x.setAttribute('aria-pressed', x === b));
+    render();
+  }));
+
+  const fromHash = location.hash.slice(1);
+  const saved = fromHash === 'en' || fromHash === 'ar' ? fromHash : (load('phc-lang') || load('portfolio-lang'));
+  if (saved === 'en' || saved === 'ar') lang = saved;
+  loadSample();
+  applyLang();
+})();
+</script>
+
+</body>
+</html>

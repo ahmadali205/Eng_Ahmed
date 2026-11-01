@@ -1,4 +1,4 @@
-import { useLang } from '../i18n.jsx';
+import { useLang, asset } from '../i18n.jsx';
 import SectionHeader from './SectionHeader.jsx';
 
 // Illustrative S-curves (cumulative %), not real project data.
@@ -36,7 +36,7 @@ function SCurve({ labels }) {
 }
 
 export default function ProjectControls() {
-  const { t, dir } = useLang();
+  const { t, dir, lang } = useLang();
   const c = t.controls;
   return (
     <section id="controls" className="section section-navy" aria-labelledby="controls-title">
@@ -68,6 +68,16 @@ export default function ProjectControls() {
                 </li>
               ))}
             </ul>
+            <div className="tool-cta">
+              <span className="icon-tile is-dark"><i className="bi bi-speedometer2" aria-hidden="true" /></span>
+              <div>
+                <h3>{c.toolTitle}</h3>
+                <p>{c.toolText}</p>
+                <a className="btn-gold" href={`${asset('tools/project-health-check/')}#${lang}`}>
+                  {c.toolCta} <i className="bi bi-arrow-up-right" aria-hidden="true" />
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       </div>

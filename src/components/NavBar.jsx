@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useLang } from '../i18n.jsx';
+import { useLang, asset } from '../i18n.jsx';
 
 const SECTIONS = ['about', 'experience', 'expertise', 'skills', 'projects', 'controls', 'contact'];
 
@@ -55,6 +55,11 @@ export default function NavBar() {
                 </a>
               </li>
             ))}
+            <li>
+              <a href={`${asset('tools/project-health-check/')}#${lang}`} className="nav-tool">
+                <i className="bi bi-speedometer2" aria-hidden="true" /> {t.nav.tool}
+              </a>
+            </li>
           </ul>
           <button
             type="button"

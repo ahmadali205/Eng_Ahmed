@@ -1516,3 +1516,19 @@ button.btn-gold {
 button.btn-outline-light-custom {
   background: transparent;
 }
+
+/* ---------- Project Health Check link ---------- */
+.tool-cta {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  margin-top: 28px;
+  padding: 22px;
+  border: 1px solid var(--gold);
+  border-radius: 10px;
+  background: rgba(200, 165, 90, 0.08);
+}
+.tool-cta h3 { margin: 0 0 6px; font-size: 1.15rem; }
+.tool-cta p { margin: 0 0 16px; }
+.nav-links .nav-tool { color: var(--gold); }
+.nav-links .nav-tool .bi { margin-inline-end: 4px; }
